@@ -2,6 +2,10 @@ FROM ruby:4.0.1-alpine3.23
 
 WORKDIR /app
 
-RUN gem install zmq
+RUN apk add --no-cache \
+    build-base \
+    zeromq-dev
+
+RUN gem install ffi-rzmq
 
 CMD ["ruby", "main.rb"]
