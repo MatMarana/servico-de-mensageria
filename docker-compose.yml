@@ -1,33 +1,35 @@
 services:
 # -------------- PYTHON ---------
-#  servidor-python:
-#    build:
-#     context: .
-#      dockerfile: Dockerfile-python
-#    image: servidor_python:pyzmq
-#    volumes: - ./servidor.py:/app/main.py # passar caminho real dos arquivos main
-#    ports:
-#      - 5555:5555
-#    deploy:
-#      replicas: 1
+  servidor-python:
+    build:
+     context: .
+      dockerfile: Dockerfile-python
+#     image: servidor_python:pyzmq
+    volumes: 
+      - ./servidor.py:/app/main.py # passar caminho real dos arquivos main
+    ports:
+      - 5555:5555
+    deploy:
+      replicas: 1
 
-#  cliente:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile-python
+  cliente:
+    build:
+      context: .
+      dockerfile: Dockerfile-python
 #    image: cliente_python:pyzmq
-#    volumes: - ./cliente.py:/app/main.py # passar caminho real dos arquivos main
-#    depends_on:
-#      - servidor-python
-#    deploy:
-#      replicas: 1
+    volumes: 
+      - ./cliente.py:/app/main.py # passar caminho real dos arquivos main
+    depends_on:
+      - servidor-python
+    deploy:
+      replicas: 1
 
 # -------- RUBY -----------
   servidor-ruby:
     build:
       context: .
       dockerfile: Dockerfile-ruby
-    #image: servidor_ruby:gemzmq
+#    image: servidor_ruby:gemzmq
     volumes: 
       - ./codigo-ruby/servidor.rb:/app/main.rb 
     ports:
@@ -39,7 +41,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-ruby
-    #image: cliente_ruby:gemzmq
+#    image: cliente_ruby:gemzmq
     volumes: 
       - ./codigo-ruby/cliente.rb:/app/main.rb 
     depends_on:
@@ -48,25 +50,27 @@ services:
       replicas: 1
 
 # -------------- C# -------------
-#  servidor-chsarp:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile-csharp
+  servidor-chsarp:
+    build:
+      context: .
+      dockerfile: Dockerfile-csharp
 #    image: servidor_csharp:cszmq
-#    volumes: - ./servidor.cs:/app/main.cs # passar caminho real dos arquivos main
-#    ports:
-#      - 5555:5555
-#    deploy:
-#      replicas: 1
-#
-#  cliente:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile-csharp
+    volumes: 
+      - ./servidor.cs:/app/main.cs # passar caminho real dos arquivos main
+    ports:
+      - 5555:5555
+    deploy:
+      replicas: 1
+
+  cliente:
+    build:
+      context: .
+      dockerfile: Dockerfile-csharp
 #    image: cliente_csharp:cszmq
-#    volumes: - ./cliente.cs:/app/main.cs # passar caminho real dos arquivos main
-#    ports:
-#      - 5555:5555
-#    deploy:
-#      replicas: 1
+    volumes: 
+      - ./cliente.cs:/app/main.cs # passar caminho real dos arquivos main
+    depends_on:
+      - servidor-csharp
+    deploy:
+      replicas: 1
  
