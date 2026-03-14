@@ -8,17 +8,17 @@ using NetMQ;
 using NetMQ.Sockets;
 class Program
 {
-    static List<string> BuildNamesList()
+    static HashSet<string> BuildNamesList()
     {
         string path = "dbload.txt";
-        List<string> nomesCarregados = new List<string>();
+        HashSet<string> nomesCarregados = new HashSet<string>();
 
         try
         {
             string conteudo = File.ReadAllText(path);
             string[] nomes = conteudo.Split(",");
 
-            nomesCarregados = nomes.Select(n => n.Trim()).OrderBy(x => Random.Shared.Next()).Take(9).ToList();
+            nomesCarregados = nomes.Select(n => n.Trim()).OrderBy(x => Random.Shared.Next()).Take(9).ToHashSet();
         }
         catch (Exception ex)
         {
@@ -30,24 +30,49 @@ class Program
     }
     static void Main(string[] args)
     {
-        List<string> nomesCarregados = BuildNamesList();
+        HashSet<string> nomesCarregados = BuildNamesList();
 
-        foreach (string nome in nomesCarregados)
-        {
-            Console.WriteLine(nome);
-        }
         using (var server = new ResponseSocket())
         {
-            int i = 0;
             server.Bind("tcp://*:5555");
             while (true)
             {
-                string message = server.ReceiveFrameString();
-                string name = nomesCarregados[i];
-                server.SendFrame(name);
+                string message, resposta, conteudo, operacao;
+                message = server.ReceiveFrameString();
 
-                i = i < 9 ? i = i + 1 : 8;
+                conteudo = GetContent(message);
+                operacao = GetOperation(message);
+
+                switch (operacao)
+                {
+                    case "Login":
+                        resposta = LoginAutication(conteudo, nomesCarregados);
+                        break;
+
+                    default:
+                        resposta = "...";
+                        break;
+                }
+                server.SendFrame(resposta);
             }
         }
+    }
+
+    static string GetContent(string message)
+    {
+        return message.Split(":")[1].Trim();
+    }
+
+    static string GetOperation(string message)
+    {
+        return message.Split(":")[0].Trim();
+    }
+    static string LoginAutication(string nome, HashSet<string> nomesCarregados)
+    {
+        if (nomesCarregados.Contains(nome))
+        {
+            return "Recusado";
+        }
+        return "Autorizado";
     }
 }

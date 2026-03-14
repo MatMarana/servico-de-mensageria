@@ -4,8 +4,26 @@ using NetMQ;
 using NetMQ.Sockets;
 class Program
 {
+    static string[] GetNamesFromFile()
+    {
+        string path = "dbload.txt";
+        string[] nomes = [];
+
+        try
+        {
+            string conteudo = File.ReadAllText(path);
+            nomes = conteudo.Split(", ");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao ler o arquivo: {ex.Message}");
+        }
+        return nomes;
+
+    }
     static void Main(string[] args)
     {
+        string[] nomes = GetNamesFromFile();
         using (var client = new RequestSocket())
         {
             client.Connect("tcp://servidor-csharp:5555");
@@ -13,14 +31,21 @@ class Program
 
             while (true)
             {
-                Console.Write($"Mensagem {i}: ");
+                string nome, message;
+                if (i == 10)
+                {
+                    Console.WriteLine("Impossível Logar");
+                    break;
+                }
 
-                client.SendFrame("Hello");
-                string message = client.ReceiveFrameString();
+                nome = nomes[i];
+                client.SendFrame($"Login: {nome}");
+                message = client.ReceiveFrameString();
+
                 Console.WriteLine(message);
-                i++;
 
                 Thread.Sleep(1000);
+                i++;
             }
         }
     }
