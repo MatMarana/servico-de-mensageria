@@ -5,7 +5,7 @@ services:
 #      context: .
 #       dockerfile: Dockerfile-python
 # #     image: servidor_python:pyzmq
-#     volumes: 
+#     volumes:
 #       - ./servidor.py:/app/main.py # passar caminho real dos arquivos main
 #     ports:
 #       - 5555:5555
@@ -17,7 +17,7 @@ services:
 #       context: .
 #       dockerfile: Dockerfile-python
 # #    image: cliente_python:pyzmq
-#     volumes: 
+#     volumes:
 #       - ./cliente.py:/app/main.py # passar caminho real dos arquivos main
 #     depends_on:
 #       - servidor-python
@@ -30,8 +30,8 @@ services:
 #       context: .
 #       dockerfile: Dockerfile-ruby
 # #    image: servidor_ruby:gemzmq
-#     volumes: 
-#       - ./codigo-ruby/servidor.rb:/app/main.rb 
+#     volumes:
+#       - ./codigo-ruby/servidor.rb:/app/main.rb
 #     ports:
 #       - 5555:5555
 #     deploy:
@@ -42,8 +42,8 @@ services:
 #       context: .
 #       dockerfile: Dockerfile-ruby
 # #    image: cliente_ruby:gemzmq
-#     volumes: 
-#       - ./codigo-ruby/cliente.rb:/app/main.rb 
+#     volumes:
+#       - ./codigo-ruby/cliente.rb:/app/main.rb
 #     depends_on:
 #       - servidor-ruby
 #     deploy:
@@ -56,11 +56,10 @@ services:
       dockerfile: Dockerfile-csharp
       args:
         FOLDER_NAME: Servidor
-    # Remova os volumes de C# por enquanto se eles ainda estiverem lá
     ports:
       - 5555:5555
 
-  cliente:
+  cliente-csharp:
     build:
       context: .
       dockerfile: Dockerfile-csharp
@@ -68,4 +67,4 @@ services:
         FOLDER_NAME: Cliente
     depends_on:
       - servidor-csharp
- 
+

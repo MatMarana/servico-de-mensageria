@@ -3,15 +3,17 @@ ARG FOLDER_NAME
 WORKDIR /src
 
 COPY ./codigo-csharp/${FOLDER_NAME}/ .
+COPY ./codigo-csharp/dbload.txt .
 
 RUN dotnet restore
 RUN dotnet publish -c Release -o /app/out
 
 FROM mcr.microsoft.com/dotnet/runtime:8.0
-ARG FOLDER_NAME 
+ARG FOLDER_NAME
 ENV DLL_NAME=${FOLDER_NAME}.dll
 
 WORKDIR /app
 COPY --from=build /app/out .
+COPY ./codigo-csharp/dbload.txt .
 
 ENTRYPOINT dotnet $DLL_NAME
