@@ -42,11 +42,15 @@ class Program
 
     static string Login(string nome, RequestSocket client)
     {
-        string mensagem, horario;
+        string mensagem, horario, envio;
 
         horario = DateTime.Now.ToString("HH:mm:ss");
+        envio = $"Login|{nome}|{horario}";
 
-        client.SendFrame($"Login|{nome}|{horario}");
+        Console.WriteLine(envio);
+        Thread.Sleep(500);
+
+        client.SendFrame(envio);
         mensagem = client.ReceiveFrameString();
 
         return mensagem;
@@ -71,9 +75,7 @@ class Program
 
     static string GetEtapa(string mensagem, string etapa)
     {
-        Console.WriteLine(mensagem);
-
-        if (mensagem == "Autorizado")
+        if (mensagem == "Login")
         {
             return "Canal";
         }

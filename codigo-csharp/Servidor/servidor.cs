@@ -26,6 +26,12 @@ class Program
             return nomesCarregados;
         }
 
+        Console.WriteLine("========================= | Nomes Carregados | =========================");
+        foreach (string nome in nomesCarregados)
+        {
+            Console.Write($"{nome} | ");
+        }
+        Console.WriteLine("\n========================================================================");
         return nomesCarregados;
     }
     static void Main(string[] args)
@@ -54,6 +60,8 @@ class Program
                         resposta = "...";
                         break;
                 }
+                Console.WriteLine(resposta);
+                Thread.Sleep(500);
                 server.SendFrame(resposta);
             }
         }
@@ -78,8 +86,8 @@ class Program
     {
         if (nomesCarregados.Contains(nome))
         {
-            return "Recusado";
+            return "Erro";
         }
-        return "Autorizado";
+        return "Login";
     }
 }
