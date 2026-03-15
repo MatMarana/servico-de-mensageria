@@ -48,7 +48,7 @@ class Program
         int index = Random.Shared.Next(0, channels.Length);
 
         channel = channels[index];
-        shipping = FormatShipping("Canais", channel);
+        shipping = FormatShipping("canais", channel);
         message = SendToServer(shipping, client);
 
         return message;
@@ -108,7 +108,7 @@ class Program
         Thread.Sleep(500);
 
         client.SendFrame(shipping);
-        message = client.ReceiveFrameString();
+        message = client.ReceiveFrameString().ToLower();
 
         return message;
     }
