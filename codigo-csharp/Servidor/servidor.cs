@@ -37,11 +37,12 @@ class Program
             server.Bind("tcp://*:5555");
             while (true)
             {
-                string message, resposta, conteudo, operacao;
+                string message, resposta, conteudo, operacao, horario;
                 message = server.ReceiveFrameString();
 
                 conteudo = GetContent(message);
                 operacao = GetOperation(message);
+                horario = GetTime(message);
 
                 switch (operacao)
                 {
@@ -58,15 +59,21 @@ class Program
         }
     }
 
+    static string GetTime(string message)
+    {
+        return message.Split("|")[2].Trim();
+    }
+
     static string GetContent(string message)
     {
-        return message.Split(":")[1].Trim();
+        return message.Split("|")[1].Trim();
     }
 
     static string GetOperation(string message)
     {
-        return message.Split(":")[0].Trim();
+        return message.Split("|")[0].Trim();
     }
+
     static string LoginAutication(string nome, HashSet<string> nomesCarregados)
     {
         if (nomesCarregados.Contains(nome))
