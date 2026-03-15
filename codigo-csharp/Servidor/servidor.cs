@@ -10,84 +10,102 @@ class Program
 {
     static HashSet<string> BuildNamesList()
     {
-        string path = "dbload.txt";
-        HashSet<string> nomesCarregados = new HashSet<string>();
+        string path = "names.txt";
+        HashSet<string> loadedNames = new HashSet<string>();
 
         try
         {
-            string conteudo = File.ReadAllText(path);
-            string[] nomes = conteudo.Split(",");
+            string content = File.ReadAllText(path);
+            string[] names = content.Split(",");
 
-            nomesCarregados = nomes.Select(n => n.Trim()).OrderBy(x => Random.Shared.Next()).Take(9).ToHashSet();
+            loadedNames = names.Select(n => n.Trim().ToLower()).OrderBy(x => Random.Shared.Next()).Take(7).ToHashSet();
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Erro ao ler o arquivo: {ex.Message}");
-            return nomesCarregados;
+            return loadedNames;
         }
 
         Console.WriteLine("========================= | Nomes Carregados | =========================");
-        foreach (string nome in nomesCarregados)
+        foreach (string name in loadedNames)
         {
-            Console.Write($"{nome} | ");
+            Console.Write($"{name} | ");
         }
         Console.WriteLine("\n========================================================================");
-        return nomesCarregados;
+        return loadedNames;
     }
+
     static void Main(string[] args)
     {
-        HashSet<string> nomesCarregados = BuildNamesList();
+        HashSet<string> loadedNames = BuildNamesList();
+        HashSet<string> loadedChannels = new HashSet<string>();
 
         using (var server = new ResponseSocket())
         {
             server.Bind("tcp://*:5555");
             while (true)
             {
-                string message, resposta, conteudo, operacao, horario;
+                string message, response, content, operation, time;
                 message = server.ReceiveFrameString();
 
-                conteudo = GetContent(message);
-                operacao = GetOperation(message);
-                horario = GetTime(message);
+                content = GetContent(message);
+                operation = GetOperation(message);
+                time = GetTime(message);
 
-                switch (operacao)
+                switch (operation)
                 {
-                    case "Login":
-                        resposta = LoginAutication(conteudo, nomesCarregados);
+                    case "login":
+                        response = LoginAutication(content, loadedNames);
+                        break;
+
+                    case "canais":
+                        response = CanaisValidation(content, loadedChannels);
                         break;
 
                     default:
-                        resposta = "...";
+                        response = "...";
                         break;
                 }
-                Console.WriteLine(resposta);
+
+                Console.WriteLine(response);
                 Thread.Sleep(500);
-                server.SendFrame(resposta);
+                server.SendFrame(response);
             }
         }
     }
 
     static string GetTime(string message)
     {
-        return message.Split("|")[2].Trim();
+        return message.Split("|")[2].Trim().ToLower();
     }
 
     static string GetContent(string message)
     {
-        return message.Split("|")[1].Trim();
+        return message.Split("|")[1].Trim().ToLower();
     }
 
     static string GetOperation(string message)
     {
-        return message.Split("|")[0].Trim();
+        return message.Split("|")[0].Trim().ToLower();
     }
 
-    static string LoginAutication(string nome, HashSet<string> nomesCarregados)
+    static string LoginAutication(string name, HashSet<string> loadedNames)
     {
-        if (nomesCarregados.Contains(nome))
+        if (loadedNames.Contains(name))
         {
-            return "Erro";
+            return "erro";
         }
-        return "Login";
+        return "login";
+    }
+
+    static string CanaisValidation(string channel, HashSet<string> loadedChannels)
+    {
+        bool existentChannel = loadedChannels.Add(channel);
+
+        if (existentChannel)
+        {
+            return "sucesso";
+        }
+        return "erro";
     }
 }

@@ -6,8 +6,10 @@ class Program
 {
     static void Main(string[] args)
     {
-        string[] nomes = GetNamesFromFile();
-        string etapa = "Login";
+        string[] names = ReadFile("names.txt");
+        string[] channels = ReadFile("channels.txt");
+
+        string step = "login";
 
         using (var client = new RequestSocket())
         {
@@ -16,70 +18,98 @@ class Program
 
             while (true)
             {
-                string mensagem;
+                string message;
 
-                switch (etapa)
+                switch (step)
                 {
-                    case "Login":
-                        mensagem = Login(nomes[i], client);
+                    case "login":
+                        message = Login(names[i], client);
                         break;
 
-                    case "Canal":
-                        mensagem = "Canais";
+                    case "canais":
+                        message = Channels(channels, client);
                         break;
 
                     default:
-                        mensagem = "...";
+                        message = "...";
                         break;
                 }
 
-                etapa = GetEtapa(mensagem, etapa);
+                step = GetStep(message, step);
                 Thread.Sleep(1000);
                 i++;
             }
         }
     }
 
-    static string Login(string nome, RequestSocket client)
+    static string Channels(string[] channels, RequestSocket client)
     {
-        string mensagem, horario, envio;
+        string channel, shipping, message;
+        int index = Random.Shared.Next(0, channels.Length);
 
-        horario = DateTime.Now.ToString("HH:mm:ss");
-        envio = $"Login|{nome}|{horario}";
+        channel = channels[index];
+        shipping = FormatShipping("Canais", channel);
+        message = SendToServer(shipping, client);
 
-        Console.WriteLine(envio);
-        Thread.Sleep(500);
-
-        client.SendFrame(envio);
-        mensagem = client.ReceiveFrameString();
-
-        return mensagem;
+        return message;
     }
 
-    static string[] GetNamesFromFile()
+    static string Login(string nome, RequestSocket client)
     {
-        string path = "dbload.txt";
-        string[] nomes = [];
+        string message, shipping;
+
+        shipping = FormatShipping("login", nome);
+        message = SendToServer(shipping, client);
+
+        return message;
+    }
+
+    static string[] ReadFile(string path)
+    {
+        string[] content = [];
 
         try
         {
-            string conteudo = File.ReadAllText(path);
-            nomes = conteudo.Split(", ");
+            string file = File.ReadAllText(path);
+            content = file.Split(", ");
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Erro ao ler o arquivo: {ex.Message}");
         }
-        return nomes;
+        return content;
     }
 
-    static string GetEtapa(string mensagem, string etapa)
+    static string GetStep(string message, string step)
     {
-        if (mensagem == "Login")
+        if (step == "login" && message == "login")
         {
-            return "Canal";
+            return "canais";
         }
 
-        return etapa;
+        if (step == "canais" && message == "erro")
+        {
+            return "listar";
+        }
+        return step;
+    }
+
+    static string FormatShipping(string operation, string content)
+    {
+        string time = DateTime.Now.ToString("HH:mm:ss");
+        return $"{operation}|{content}|{time}".ToLower();
+    }
+
+    static string SendToServer(string shipping, RequestSocket client)
+    {
+        string message;
+
+        Console.WriteLine(shipping);
+        Thread.Sleep(500);
+
+        client.SendFrame(shipping);
+        message = client.ReceiveFrameString();
+
+        return message;
     }
 }
