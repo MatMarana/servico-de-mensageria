@@ -1,49 +1,50 @@
 import zmq
 import msgpack
+import time
 from datetime import datetime
 
-ARQUIVO = "usuarioLogin.txt"
+ARQUIVO_CADASTRO = "usuarioCadastrado.txt"
 
 
 def carregar_usuarios():
-    with open(ARQUIVO, "r") as f:
+    with open(ARQUIVO_CADASTRO, "r") as f:
         conteudo = f.read().strip()
         return conteudo.split(",")
-
 
 
 context = zmq.Context()
 socket = context.socket(zmq.REP)
 socket.bind("tcp://*:5555")
 
-print("Servidor rodando...")
-usuarios = carregar_usuarios() 
+print("---------------------------------")
+print("Servidor Iniciado", flush=True)
+
+usuarios = carregar_usuarios()
+
 while True:
 
     mensagem_bin = socket.recv()
-    mensagem = msgpack.unpackb(mensagem_bin).decode()
+    mensagem = msgpack.unpackb(mensagem_bin, raw=False)
 
-    print("Mensagem recebida:", mensagem)
+    
 
     lista_msg = mensagem.split("|")
     operacao = lista_msg[0]
     conteudo = lista_msg[1]
     timestamp = lista_msg[2]
-    
 
-    # "switch"
-    if operacao == "LOGIN":
+    if operacao == "login":
 
         if conteudo in usuarios:
-
-            resposta = f"ERRO|Usuario ja existe|{datetime.now()}"
+            resposta = "erro"
 
         else:
-
-            resposta = f"OK|Login realizado|{datetime.now()}"
+            resposta = "login"
 
     else:
+        resposta = "erro"
 
-        resposta = f"ERRO|Operacao desconhecida|{datetime.now()}"
-
+    resposta = resposta.strip().lower()
+    print(resposta, flush=True)
+    time.sleep(0.5)
     socket.send(msgpack.packb(resposta))

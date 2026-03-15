@@ -1,7 +1,11 @@
+
 FROM python:3.14.3-alpine3.23
 
 WORKDIR /app
 
-RUN pip install pyzmq
+COPY ./codigo-python/usuarioLogin.txt .
+COPY ./codigo-python/usuarioCadastrado.txt . 
 
-CMD ['python', 'main.py']
+RUN pip install pyzmq msgpack
+
+CMD ["python", "main.py"]

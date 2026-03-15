@@ -2,23 +2,23 @@ services:
 # -------------- PYTHON ---------
   servidor-python:
     build:
-     context: .
+      context: .
       dockerfile: Dockerfile-python
 #     image: servidor_python:pyzmq
     volumes: 
-      - ./servidor.py:/app/main.py # passar caminho real dos arquivos main
+      - ./codigo-python/servidor.py:/app/main.py # passar caminho real dos arquivos main
     ports:
       - 5555:5555
     deploy:
       replicas: 1
 
-  cliente:
+  cliente-python:
     build:
       context: .
       dockerfile: Dockerfile-python
 #    image: cliente_python:pyzmq
     volumes: 
-      - ./cliente.py:/app/main.py # passar caminho real dos arquivos main
+      - ./codigo-python/cliente.py:/app/main.py # passar caminho real dos arquivos main
     depends_on:
       - servidor-python
     deploy:
