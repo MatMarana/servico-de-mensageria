@@ -34,7 +34,11 @@ class Program
                         break;
 
                     case "canais":
-                        response = CanaisValidation(content, loadedChannels);
+                        response = ChannelsValidation(content, loadedChannels);
+                        break;
+
+                    case "listar":
+                        response = ChannelsList(loadedChannels);
                         break;
 
                     default:
@@ -46,16 +50,29 @@ class Program
         }
     }
 
-    static string LoginAutication(string name, HashSet<string> loadedNames)
+    static string ChannelsList(HashSet<string> loadedChannels)
     {
-        if (loadedNames.Contains(name))
+        string channelsList = "";
+        int i = 0;
+
+        foreach (string channel in loadedChannels)
         {
-            return "erro";
+            string line = "";
+
+            if (i > 0)
+            {
+                line += "\n";
+            }
+
+            line += $"Canal {i}: {channel}";
+            channelsList += line;
+            i++;
         }
-        return "login";
+
+        return channelsList;
     }
 
-    static string CanaisValidation(string channel, HashSet<string> loadedChannels)
+    static string ChannelsValidation(string channel, HashSet<string> loadedChannels)
     {
         bool existentChannel = loadedChannels.Add(channel);
 
@@ -64,5 +81,14 @@ class Program
             return "sucesso";
         }
         return "erro";
+    }
+
+    static string LoginAutication(string name, HashSet<string> loadedNames)
+    {
+        if (loadedNames.Contains(name))
+        {
+            return "erro";
+        }
+        return "login";
     }
 }

@@ -30,6 +30,10 @@ class Program
                         message = Channels(channels, client);
                         break;
 
+                    case "listar":
+                        message = ListChannels(client);
+                        break;
+
                     default:
                         message = "...";
                         break;
@@ -40,6 +44,16 @@ class Program
                 i++;
             }
         }
+    }
+
+    static string ListChannels(RequestSocket client)
+    {
+        string shipping, message;
+
+        shipping = ClientHelpers.FormatShipping("listar", "");
+        message = ClientHelpers.SendToServer(shipping, client);
+
+        return message;
     }
 
     static string Channels(string[] channels, RequestSocket client)
