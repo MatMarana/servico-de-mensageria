@@ -1,13 +1,14 @@
 using System;
 using System.Threading;
+using Utils;
 using NetMQ;
 using NetMQ.Sockets;
 class Program
 {
     static void Main(string[] args)
     {
-        string[] names = ReadFile("names.txt");
-        string[] channels = ReadFile("channels.txt");
+        string[] names = ClientHelpers.ReadFile("names.txt");
+        string[] channels = ClientHelpers.ReadFile("channels.txt");
 
         string step = "login";
 
@@ -19,7 +20,6 @@ class Program
             while (true)
             {
                 string message;
-
                 switch (step)
                 {
                     case "login":
@@ -48,8 +48,8 @@ class Program
         int index = Random.Shared.Next(0, channels.Length);
 
         channel = channels[index];
-        shipping = FormatShipping("canais", channel);
-        message = SendToServer(shipping, client);
+        shipping = ClientHelpers.FormatShipping("canais", channel);
+        message = ClientHelpers.SendToServer(shipping, client);
 
         return message;
     }
@@ -58,26 +58,10 @@ class Program
     {
         string message, shipping;
 
-        shipping = FormatShipping("login", nome);
-        message = SendToServer(shipping, client);
+        shipping = ClientHelpers.FormatShipping("login", nome);
+        message = ClientHelpers.SendToServer(shipping, client);
 
         return message;
-    }
-
-    static string[] ReadFile(string path)
-    {
-        string[] content = [];
-
-        try
-        {
-            string file = File.ReadAllText(path);
-            content = file.Split(", ");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Erro ao ler o arquivo: {ex.Message}");
-        }
-        return content;
     }
 
     static string GetStep(string message, string step)
@@ -92,24 +76,5 @@ class Program
             return "listar";
         }
         return step;
-    }
-
-    static string FormatShipping(string operation, string content)
-    {
-        string time = DateTime.Now.ToString("HH:mm:ss");
-        return $"{operation}|{content}|{time}".ToLower();
-    }
-
-    static string SendToServer(string shipping, RequestSocket client)
-    {
-        string message;
-
-        Console.WriteLine(shipping);
-        Thread.Sleep(500);
-
-        client.SendFrame(shipping);
-        message = client.ReceiveFrameString().ToLower();
-
-        return message;
     }
 }
