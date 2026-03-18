@@ -17,7 +17,7 @@ class Program
 
         using (var server = new ResponseSocket())
         {
-            server.Bind("tcp://*:5555");
+            server.Connect("tcp://broker:5556");
             while (true)
             {
                 string message, response, content, operation, time;
@@ -61,9 +61,8 @@ class Program
 
             if (i > 0)
             {
-                line += "\n";
+                line += "\nC-Sharp: ";
             }
-
             line += $"Canal {i}: {channel}";
             channelsList += line;
             i++;

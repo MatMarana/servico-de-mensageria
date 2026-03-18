@@ -6,7 +6,7 @@ public class ServerHelpers
 {
     public static void SendToClient(string response, ResponseSocket server)
     {
-        Console.WriteLine(response);
+        Console.WriteLine($"C-Sharp: {response}");
         Thread.Sleep(500);
         server.SendFrame(response);
     }
@@ -50,7 +50,7 @@ public class ServerHelpers
 
     static void PrintLoadedNames(HashSet<string> loadedNames)
     {
-        Console.WriteLine("========================= | Nomes Carregados | =========================");
+        Console.WriteLine("========================= | Nomes Carregados - C-Sharp | =========================");
         foreach (string name in loadedNames)
         {
             Console.Write($"{name} | ");

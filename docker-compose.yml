@@ -1,53 +1,65 @@
 services:
+# -------------- BROKER ---------
+  broker:
+    build:
+      context: .
+      dockerfile: Dockerfile-python
+    container_name: broker
+    volumes:
+      - ./broker/broker.py:/app/main.py
+    ports:
+      - 5555:5555
+      - 5556:5556
+
 # -------------- PYTHON ---------
-  servidor-python:
-    build:
-     context: .
-      dockerfile: Dockerfile-python
-#     image: servidor_python:pyzmq
-    volumes:
-      - ./servidor.py:/app/main.py # passar caminho real dos arquivos main
-    ports:
-      - 5555:5555
-    deploy:
-      replicas: 1
+#   servidor-python:
+#     build:
+#      context: .
+#       dockerfile: Dockerfile-python
+# #     image: servidor_python:pyzmq
+#     volumes:
+#       - ./servidor.py:/app/main.py # passar caminho real dos arquivos main
+#     ports:
+#       - 5555:5555
+#     deploy:
+#       replicas: 1
 
-  cliente:
-    build:
-      context: .
-      dockerfile: Dockerfile-python
-#    image: cliente_python:pyzmq
-    volumes:
-      - ./cliente.py:/app/main.py # passar caminho real dos arquivos main
-    depends_on:
-      - servidor-python
-    deploy:
-      replicas: 1
+#   cliente:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile-python
+# #    image: cliente_python:pyzmq
+#     volumes:
+#       - ./cliente.py:/app/main.py # passar caminho real dos arquivos main
+#     depends_on:
+#       - servidor-python
+#     deploy:
+#       replicas: 1
 
-# -------- RUBY -----------
-  servidor-ruby:
-    build:
-      context: .
-      dockerfile: Dockerfile-ruby
-#    image: servidor_ruby:gemzmq
-    volumes:
-      - ./codigo-ruby/servidor.rb:/app/main.rb
-    ports:
-      - 5555:5555
-    deploy:
-      replicas: 1
+# # -------- RUBY -----------
+#   servidor-ruby:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile-ruby
+# #    image: servidor_ruby:gemzmq
+#     volumes:
+#       - ./codigo-ruby/servidor.rb:/app/main.rb
+#     ports:
+#       - 5555:5555
+#     deploy:
+#       replicas: 1
 
-  cliente:
-    build:
-      context: .
-      dockerfile: Dockerfile-ruby
-#    image: cliente_ruby:gemzmq
-    volumes:
-      - ./codigo-ruby/cliente.rb:/app/main.rb
-    depends_on:
-      - servidor-ruby
-    deploy:
-      replicas: 1
+#   cliente:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile-ruby
+# #    image: cliente_ruby:gemzmq
+#     volumes:
+#       - ./codigo-ruby/cliente.rb:/app/main.rb
+#     depends_on:
+#       - servidor-ruby
+#     deploy:
+#       replicas: 1
 
 # -------------- C# -------------
   servidor-csharp:
@@ -56,8 +68,8 @@ services:
       dockerfile: Dockerfile-csharp
       args:
         FOLDER_NAME: Servidor
-    ports:
-      - 5555:5555
+    depends_on:
+      - broker
 
   cliente-csharp:
     build:

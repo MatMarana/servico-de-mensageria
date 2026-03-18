@@ -14,7 +14,7 @@ public class ClientHelpers
     {
         string message;
 
-        Console.WriteLine(shipping);
+        Console.WriteLine($"C-Sharp: {shipping}");
         Thread.Sleep(500);
 
         client.SendFrame(shipping);

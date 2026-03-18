@@ -14,7 +14,7 @@ class Program
 
         using (var client = new RequestSocket())
         {
-            client.Connect("tcp://servidor-csharp:5555");
+            client.Connect("tcp://broker:5555");
             int i = 0;
 
             while (true)
