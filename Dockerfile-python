@@ -5,6 +5,7 @@ WORKDIR /app
 
 COPY ./codigo-python/usuarioLogin.txt .
 COPY ./codigo-python/usuarioCadastrado.txt . 
+COPY ./codigo-python/canais.txt . 
 
 RUN pip install pyzmq msgpack
 

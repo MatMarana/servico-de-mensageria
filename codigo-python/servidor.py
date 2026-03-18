@@ -20,29 +20,32 @@ print("---------------------------------")
 print("Servidor Iniciado", flush=True)
 
 usuarios = carregar_usuarios()
+canais_recebidos = []
+
+def adiciona_canal(canais:list, canal: str):
+    canais.append(canal)
 
 while True:
-
     mensagem_bin = socket.recv()
     mensagem = msgpack.unpackb(mensagem_bin, raw=False)
-
-    
-
     lista_msg = mensagem.split("|")
     operacao = lista_msg[0]
     conteudo = lista_msg[1]
     timestamp = lista_msg[2]
 
     if operacao == "login":
-
         if conteudo in usuarios:
             resposta = "erro"
-
         else:
             resposta = "login"
-
+    elif operacao == "canais":
+        if conteudo not in canais_recebidos:
+            adiciona_canal(canais_recebidos,conteudo)
+            resposta = "sucesso"
+        else:
+            resposta = "erro"
     else:
-        resposta = "erro"
+        resposta = "erro inesperado"
 
     resposta = resposta.strip().lower()
     print(resposta, flush=True)
