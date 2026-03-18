@@ -84,10 +84,11 @@ class Program
 
     static string LoginAutication(string name, HashSet<string> loadedNames)
     {
-        if (loadedNames.Contains(name))
+        bool existentName = loadedNames.Add(name);
+        if (existentName)
         {
-            return "erro";
+            return "login";
         }
-        return "login";
+        return "erro";
     }
 }
