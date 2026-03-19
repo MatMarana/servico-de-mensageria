@@ -1,4 +1,4 @@
-*.sln
 .env
 env
 .vscode
+*.sln

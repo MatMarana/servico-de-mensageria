@@ -25,7 +25,7 @@ context = zmq.Context()
 socket = context.socket(zmq.REQ)
 
 # IMPORTANTE para docker
-socket.connect("tcp://servidor-python:5555")
+socket.connect("tcp://broker:5555")
 
 #Carregando os arquivos txts:
 nomes = carregar_nomes()

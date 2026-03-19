@@ -14,7 +14,7 @@ def carregar_usuarios():
 
 context = zmq.Context()
 socket = context.socket(zmq.REP)
-socket.bind("tcp://*:5555")
+socket.connect("tcp://broker:5556")
 
 print("---------------------------------")
 print("Servidor Iniciado", flush=True)

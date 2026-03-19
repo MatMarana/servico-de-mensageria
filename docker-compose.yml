@@ -19,8 +19,8 @@ services:
 #     image: servidor_python:pyzmq
     volumes: 
       - ./codigo-python/servidor.py:/app/main.py # passar caminho real dos arquivos main
-    ports:
-      - 5555:5555
+    depends_on:
+      - broker
     deploy:
       replicas: 1
 
