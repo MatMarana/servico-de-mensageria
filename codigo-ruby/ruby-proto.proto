@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package MensagemProto;
+
+message NomeLogin{
+  string nome = 1;
+}
+
+message ResponseLogin {
+  string resposta = 1;
+}
+
+message ChannelName{
+   string nome = 1;
+}
+
+message CreateResponse{
+   string resposta = 1;
+}
+
+message ChannelRequest{
+   string mensagem = 1;
+}
+
+message ConsultResponde{
+   string resposta = 1; 
+}
+
+
