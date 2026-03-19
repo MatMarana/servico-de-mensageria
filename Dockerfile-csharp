@@ -1,18 +1,23 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG FOLDER_NAME
+WORKDIR /src
 
-WORKDIR /app
+COPY ./codigo-csharp/${FOLDER_NAME}/ .
+COPY ./codigo-csharp/Utils/ .
+COPY ./codigo-csharp/names.txt .
+COPY ./codigo-csharp/channels.txt .
 
-COPY . .
+RUN dotnet restore ${FOLDER_NAME}.csproj
+RUN dotnet publish ${FOLDER_NAME}.csproj -c Release -o /app/out
 
-RUN dotnet add package NetMQ
-RUN dotnet restore
-
-RUN dotnet publish -c Release -o out
-
-FROM mrc.microsoft.com/dotnet/runtime:8.0
+FROM mcr.microsoft.com/dotnet/runtime:8.0
+ARG FOLDER_NAME
+ENV DLL_NAME=${FOLDER_NAME}.dll
 
 WORKDIR /app
 
 COPY --from=build /app/out .
+COPY ./codigo-csharp/names.txt .
+COPY ./codigo-csharp/channels.txt .
 
-CMD ["dotnet", "app.dll"]
+ENTRYPOINT dotnet $DLL_NAME
