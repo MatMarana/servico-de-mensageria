@@ -33,7 +33,7 @@ canais = carregar_canais()
 
 logado = False
 canal = False
-listar = False
+listar = True
 
 if not logado:
     for usuario in nomes:
@@ -66,6 +66,12 @@ if logado and not canal:
         elif resposta == "sucesso":
             ...
 
-if canal and not listar:
-    
+if canal and listar:
+    while(listar):
+        mensagem = f"listar||{datetime.now()}"
+        mensagem = mensagem.strip().lower()
+        print(mensagem, flush=True) 
+        time.sleep(0.5)   
+        socket.send(msgpack.packb(mensagem))
+        resposta_bin = socket.recv()
 

@@ -24,6 +24,11 @@ canais_recebidos = []
 
 def adiciona_canal(canais:list, canal: str):
     canais.append(canal)
+    saida = ""
+    for i, c in enumerate(canais):
+        saida += f"Canal {i}: {c}\n"
+    return saida
+
 
 while True:
     mensagem_bin = socket.recv()
@@ -40,10 +45,12 @@ while True:
             resposta = "login"
     elif operacao == "canais":
         if conteudo not in canais_recebidos:
-            adiciona_canal(canais_recebidos,conteudo)
+            saida_operacao = adiciona_canal(canais_recebidos,conteudo)
             resposta = "sucesso"
         else:
             resposta = "erro"
+    elif operacao == "listar":
+        resposta = saida_operacao
     else:
         resposta = "erro inesperado"
 
