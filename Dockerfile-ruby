@@ -12,6 +12,8 @@ RUN gem install ffi-rzmq google-protobuf
 
 COPY codigo-ruby/ruby-proto.proto .
 
+COPY codigo-ruby/utils.rb .
+
 RUN protoc --ruby_out=. ruby-proto.proto
 
 CMD ["ruby", "main.rb"]
