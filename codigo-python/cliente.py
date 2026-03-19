@@ -17,7 +17,6 @@ def carregar_canais():
         conteudo = f.read().strip()
         conteudo = conteudo.split(",")
         duplicado = randint(0, len(conteudo) - 1)
-        print(duplicado)
         conteudo.append(conteudo[duplicado])
         return conteudo 
 
@@ -34,6 +33,7 @@ canais = carregar_canais()
 
 logado = False
 canal = False
+listar = False
 
 if not logado:
     for usuario in nomes:
@@ -66,4 +66,6 @@ if logado and not canal:
         elif resposta == "sucesso":
             ...
 
+if canal and not listar:
+    
 
