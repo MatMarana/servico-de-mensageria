@@ -39,7 +39,7 @@ if not logado:
     for usuario in nomes:
         mensagem = f"login|{usuario}|{datetime.now()}"
         mensagem = mensagem.strip().lower()
-        print(mensagem, flush=True)
+        print(f"python: {mensagem}", flush=True)
         time.sleep(0.5)
         socket.send(msgpack.packb(mensagem))
         resposta_bin = socket.recv()
@@ -55,7 +55,7 @@ if logado and not canal:
     for canal in canais:
         mensagem = f"canais|{canal}|{datetime.now()}"
         mensagem = mensagem.strip().lower()
-        print(mensagem, flush=True)
+        print(f"python: {mensagem}", flush=True)
         time.sleep(0.5)
         socket.send(msgpack.packb(mensagem))
         resposta_bin = socket.recv()
@@ -70,7 +70,7 @@ if canal and listar:
     while(listar):
         mensagem = f"listar||{datetime.now()}"
         mensagem = mensagem.strip().lower()
-        print(mensagem, flush=True) 
+        print(f"python: {mensagem}", flush=True) 
         time.sleep(0.5)   
         socket.send(msgpack.packb(mensagem))
         resposta_bin = socket.recv()
