@@ -16,44 +16,41 @@ loop do
   string = ""
   socket.recv_string(string)
   mensagem = MessagePack.unpack(string)
-  puts("#{mensagem["mensagem"]}")
+  
+  partes = mensagem.split("|")
+  operacao = partes[0]
+  informacao = partes[1]
+  tempo = partes[2]
 
-  if lista_nomes.include?(mensagem["nome"])
-    reply = {status: "erro"}.to_msgpack
-    socket.send_string(reply)
-  else
-    reply = {status: "login"}.to_msgpack
-    socket.send_string(reply)
-    break
+  case operacao
+    when "login"
+      if lista_nomes.include?(informacao)
+        reply = "erro"
+        reply_bin = (reply).to_msgpack
+        socket.send_string(reply_bin)
+      else
+        reply = "login"
+        reply_bin = (reply).to_msgpack
+        socket.send_string(reply_bin)
+      end
+    when "canais"
+      if lista_canais.include?(informacao)
+        reply = "erro"
+        reply_bin = (reply).to_msgpack
+        socket.send_string(reply_bin)
+      else
+        reply = "sucesso"
+        reply_bin = (reply).to_msgpack
+        socket.send_string(reply_bin)
+        lista_canais << informacao
+      end
+    when "listar"
+      reply = lista_canais
+      reply_bin = (reply).to_msgpack
+      socket.send_string(reply_bin)
   end
 
-end
+  puts "#{reply}"
 
-loop do
-  string = ""
-  socket.recv_string(string)
-  mensagem = MessagePack.unpack(string)
 
-  puts "#{mensagem["mensagem"]}"
-
-  if lista_canais.include?(mensagem["canal"])
-    reply = {status: "erro"}.to_msgpack
-    socket.send_string(reply)
-    break
-  else
-    reply = {status: "sucesso"}.to_msgpack
-    socket.send_string(reply)
-    lista_canais << mensagem["canal"]
-  end
-
-end
-
-loop do 
-  string = ""
-  socket.recv_string(string)
-  mensagem = MessagePack.unpack(string)
-
-  puts "#{mensagem["mensagem"]}"
-  reply = {canal: "#{lista_canais}"}.to_msgpack
-  socket.send_string(reply)
 end

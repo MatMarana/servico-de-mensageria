@@ -15,8 +15,8 @@ Para melhorar o debug e identificar qual cliente está mandando a mensagem adici
 **Padrão de envio:** `{Operação}|{conteudo}|{timestamp}`
 **Exemplo:** `login|albertini|19:17:21`
 
-**Padrão de print no terminal:** `{linguagem}: {mensagem}`
-**Exemplo:** `C-Sharp: login|albertini|19:17:21`
+**Padrão de print no terminal:** `{mensagem}`
+**Exemplo:** `login|albertini|19:17:21`
 
 **Todas as mensagens devem ser enviadas em letras minusculas**.
 
@@ -39,7 +39,7 @@ A resposta do servidor pode variar de acordo com a operacao enviada pelo cliente
 - [lista de todos os canais do servidor]
 
 
-**Padrão de print no terminal:** `{linguagem}: {resposta}`
-**Exemplo:** `C-Sharp: erro`
+**Padrão de print no terminal:** `{resposta}`
+**Exemplo:** `erro`
 
 **Todas as mensagens devem ser enviadas em letras minusculas**.
