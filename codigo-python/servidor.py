@@ -55,6 +55,6 @@ while True:
         resposta = "erro inesperado"
 
     resposta = resposta.strip().lower()
-    print(f"python: {resposta}", flush=True)
+    print(f"{resposta}", flush=True)
     time.sleep(0.5)
     socket.send(msgpack.packb(resposta))
