@@ -39,7 +39,7 @@ public class ClientHelpers
         try
         {
             string file = File.ReadAllText(path);
-            content = file.Split(", ");
+            content = file.Split(",");
         }
         catch (Exception ex)
         {

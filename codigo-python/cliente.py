@@ -41,7 +41,7 @@ if not logado:
         mensagem = mensagem.strip().lower()
         print(f"{mensagem}", flush=True)
         time.sleep(0.5)
-        socket.send(msgpack.packb(mensagem))
+        socket.send(msgpack.packb([mensagem]))
         resposta_bin = socket.recv()
         resposta = msgpack.unpackb(resposta_bin, raw=False)
         if resposta == "login":
@@ -57,7 +57,7 @@ if logado and not canal:
         mensagem = mensagem.strip().lower()
         print(f"{mensagem}", flush=True)
         time.sleep(0.5)
-        socket.send(msgpack.packb(mensagem))
+        socket.send(msgpack.packb([mensagem]))
         resposta_bin = socket.recv()
         resposta = msgpack.unpackb(resposta_bin, raw=False)
         if resposta == "erro":
@@ -72,6 +72,6 @@ if canal and listar:
         mensagem = mensagem.strip().lower()
         print(f"{mensagem}", flush=True) 
         time.sleep(0.5)   
-        socket.send(msgpack.packb(mensagem))
+        socket.send(msgpack.packb([mensagem]))
         resposta_bin = socket.recv()
 

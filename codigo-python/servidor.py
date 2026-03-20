@@ -32,7 +32,7 @@ def adiciona_canal(canais:list, canal: str):
 
 while True:
     mensagem_bin = socket.recv()
-    mensagem = msgpack.unpackb(mensagem_bin, raw=False)
+    mensagem = msgpack.unpackb(mensagem_bin, raw=False)[0]
     lista_msg = mensagem.split("|")
     operacao = lista_msg[0]
     conteudo = lista_msg[1]
@@ -57,4 +57,4 @@ while True:
     resposta = resposta.strip().lower()
     print(f"{resposta}", flush=True)
     time.sleep(0.5)
-    socket.send(msgpack.packb(resposta))
+    socket.send(msgpack.packb([resposta]))
