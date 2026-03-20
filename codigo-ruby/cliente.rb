@@ -17,17 +17,16 @@ loop do
   string = ""
   time = Time.now.strftime("%H:%M:%S")
   
-  mensagem_formatada = "login | #{nome} | #{time}"
+  mensagem_formatada = "login|#{nome}|#{time}"
+  puts "#{mensagem_formatada}"
 
-  mensagem = {nome: nome, mensagem: mensagem_formatada}.to_msgpack
-
+  mensagem = (mensagem_formatada).to_msgpack
   socket.send_string(mensagem)
   
   socket.recv_string(string)
   resposta = MessagePack.unpack(string)
-  puts "#{resposta["status"]}"
   
-  if resposta["status"] == "login"
+  if resposta == "login"
     break
   end
 
@@ -40,17 +39,16 @@ loop do
   string = ""
   time = Time.now.strftime("%H:%M:%S")
 
-  mensagem_formatada = "canais | #{canal} | #{time}"
+  mensagem_formatada = "canais|#{canal}|#{time}"
+  puts "#{mensagem_formatada}"
 
-  mensagem = {canal: canal, mensagem: mensagem_formatada}.to_msgpack
-
+  mensagem = (mensagem_formatada).to_msgpack
   socket.send_string(mensagem)
 
   socket.recv_string(string)
   resposta = MessagePack.unpack(string)
-  puts "#{resposta["status"]}"
 
-  if resposta["status"] == "erro"
+  if resposta == "erro"
     break
   end
 
@@ -61,16 +59,15 @@ loop do
   string = ""
   time = Time.now.strftime("%H:%M:%S")
 
-  mensagem_formatada = "listar |  | #{time}"
+  mensagem_formatada = "listar||#{time}"
 
-  mensagem = {mensagem: mensagem_formatada}.to_msgpack
+  puts "#{mensagem_formatada}"
 
+  mensagem = (mensagem_formatada).to_msgpack
   socket.send_string(mensagem)
   
   socket.recv_string(string)
   resposta = MessagePack.unpack(string)
-
-  puts "#{resposta["canal"]}"
 
   sleep(0.5)
 end
