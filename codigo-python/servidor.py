@@ -56,5 +56,5 @@ while True:
 
     resposta = resposta.strip().lower()
     print(f"{resposta}", flush=True)
-    time.sleep(0.5)
+    time.sleep(1)
     socket.send(msgpack.packb([resposta]))

@@ -13,7 +13,7 @@ public class ServerHelpers
         byte[] binaryData = MessagePackSerializer.Serialize(shippingObj);
 
         Console.WriteLine($"{response}");
-        Thread.Sleep(500);
+        Thread.Sleep(1000);
         server.SendFrame(binaryData);
     }
 

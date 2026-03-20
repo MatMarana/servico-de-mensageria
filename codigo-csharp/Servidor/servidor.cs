@@ -67,7 +67,9 @@ class Program
             channelsList += line;
             i++;
         }
-
+        if (loadedChannels.Count() == 0){
+            channelsList += "Sem canais";
+        }
         return channelsList;
     }
 

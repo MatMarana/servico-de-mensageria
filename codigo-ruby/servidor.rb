@@ -15,7 +15,7 @@ socket.connect("tcp://broker:5556")
 loop do 
   string = ""
   socket.recv_string(string)
-  mensagem = MessagePack.unpack(string)
+  mensagem = MessagePack.unpack(string)[0]
   
   partes = mensagem.split("|")
   operacao = partes[0]
@@ -26,30 +26,30 @@ loop do
     when "login"
       if lista_nomes.include?(informacao)
         reply = "erro"
-        reply_bin = (reply).to_msgpack
+        reply_bin = [reply].to_msgpack
         socket.send_string(reply_bin)
       else
         reply = "login"
-        reply_bin = (reply).to_msgpack
+        reply_bin = [reply].to_msgpack
         socket.send_string(reply_bin)
       end
     when "canais"
       if lista_canais.include?(informacao)
         reply = "erro"
-        reply_bin = (reply).to_msgpack
+        reply_bin = [reply].to_msgpack
         socket.send_string(reply_bin)
       else
         reply = "sucesso"
-        reply_bin = (reply).to_msgpack
+        reply_bin = [reply].to_msgpack
         socket.send_string(reply_bin)
         lista_canais << informacao
       end
     when "listar"
       reply = lista_canais
-      reply_bin = (reply).to_msgpack
+      reply_bin = [reply].to_msgpack
       socket.send_string(reply_bin)
   end
-
+  sleep(1)
   puts "#{reply}"
 
 

@@ -21,7 +21,7 @@ public class ClientHelpers
         byte[] binaryData = MessagePackSerializer.Serialize(shippingObj);
 
         Console.WriteLine($"{shipping}");
-        Thread.Sleep(500);
+        Thread.Sleep(1000);
 
         client.SendFrame(binaryData);
 

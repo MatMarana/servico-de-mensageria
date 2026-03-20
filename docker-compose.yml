@@ -37,29 +37,29 @@ services:
       replicas: 1
 
 # -------- RUBY -----------
-  # servidor-ruby:
-  #    build:
-  #      context: .
-  #      dockerfile: Dockerfile-ruby
-  # #  image: servidor_ruby:gemzmq
-  #    volumes:
-  #      - ./codigo-ruby/servidor.rb:/app/main.rb
-  #    depends_on:
-  #      - broker
-  #    deploy:
-  #      replicas: 1
+  servidor-ruby:
+     build:
+       context: .
+       dockerfile: Dockerfile-ruby
+  #  image: servidor_ruby:gemzmq
+     volumes:
+       - ./codigo-ruby/servidor.rb:/app/main.rb
+     depends_on:
+       - broker
+     deploy:
+       replicas: 1
 
-  # cliente:
-  #    build:
-  #      context: .
-  #      dockerfile: Dockerfile-ruby
-  #  image: cliente_ruby:gemzmq
-  #    volumes:
-  #      - ./codigo-ruby/cliente.rb:/app/main.rb
-  #    depends_on:
-  #      - servidor-ruby
-  #    deploy:
-  #      replicas: 1
+  cliente-ruby:
+    build:
+      context: .
+      dockerfile: Dockerfile-ruby
+    image: cliente_ruby:gemzmq
+    volumes:
+      - ./codigo-ruby/cliente.rb:/app/main.rb
+    depends_on:
+      - servidor-ruby
+    deploy:
+      replicas: 1 
 
 # -------------- C# -------------
   servidor-csharp:

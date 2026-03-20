@@ -11,14 +11,14 @@ def carregar_nomes():
     with open(ARQUIVO_LOGIN, "r") as f:
         conteudo = f.read().strip()
         return conteudo.split(",")
-    
+
 def carregar_canais():
     with open(ARQUIVO_CANAIS, "r") as f:
         conteudo = f.read().strip()
         conteudo = conteudo.split(",")
         duplicado = randint(0, len(conteudo) - 1)
         conteudo.append(conteudo[duplicado])
-        return conteudo 
+        return conteudo
 
 
 context = zmq.Context()
@@ -32,7 +32,7 @@ nomes = carregar_nomes()
 canais = carregar_canais()
 
 logado = False
-canal = False
+canal_bool = False
 listar = True
 
 if not logado:
@@ -40,7 +40,7 @@ if not logado:
         mensagem = f"login|{usuario}|{datetime.now()}"
         mensagem = mensagem.strip().lower()
         print(f"{mensagem}", flush=True)
-        time.sleep(0.5)
+        time.sleep(1)
         socket.send(msgpack.packb([mensagem]))
         resposta_bin = socket.recv()
         resposta = msgpack.unpackb(resposta_bin, raw=False)
@@ -49,29 +49,29 @@ if not logado:
             break
         elif resposta == "erro":
             ...
-            
 
-if logado and not canal:
+
+if logado and not canal_bool:
     for canal in canais:
         mensagem = f"canais|{canal}|{datetime.now()}"
         mensagem = mensagem.strip().lower()
         print(f"{mensagem}", flush=True)
-        time.sleep(0.5)
+        time.sleep(1)
         socket.send(msgpack.packb([mensagem]))
         resposta_bin = socket.recv()
         resposta = msgpack.unpackb(resposta_bin, raw=False)
         if resposta == "erro":
-            canal = True
+            canal_bool = True
             break
         elif resposta == "sucesso":
             ...
 
-if canal and listar:
+if canal_bool and listar:
     while(listar):
         mensagem = f"listar||{datetime.now()}"
         mensagem = mensagem.strip().lower()
-        print(f"{mensagem}", flush=True) 
-        time.sleep(0.5)   
+        print(f"{mensagem}", flush=True)
+        time.sleep(1)
         socket.send(msgpack.packb([mensagem]))
         resposta_bin = socket.recv()
 

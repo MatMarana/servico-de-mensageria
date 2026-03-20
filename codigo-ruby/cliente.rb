@@ -20,7 +20,7 @@ loop do
   mensagem_formatada = "login|#{nome}|#{time}"
   puts "#{mensagem_formatada}"
 
-  mensagem = (mensagem_formatada).to_msgpack
+  mensagem = ([mensagem_formatada]).to_msgpack
   socket.send_string(mensagem)
   
   socket.recv_string(string)
@@ -30,7 +30,7 @@ loop do
     break
   end
 
-  sleep(0.5)
+  sleep(1)
 
 end
 
@@ -42,7 +42,7 @@ loop do
   mensagem_formatada = "canais|#{canal}|#{time}"
   puts "#{mensagem_formatada}"
 
-  mensagem = (mensagem_formatada).to_msgpack
+  mensagem = ([mensagem_formatada]).to_msgpack
   socket.send_string(mensagem)
 
   socket.recv_string(string)
@@ -52,7 +52,7 @@ loop do
     break
   end
 
-  sleep(0.5)
+  sleep(1)
 end
 
 loop do 
@@ -63,11 +63,11 @@ loop do
 
   puts "#{mensagem_formatada}"
 
-  mensagem = (mensagem_formatada).to_msgpack
+  mensagem = ([mensagem_formatada]).to_msgpack
   socket.send_string(mensagem)
   
   socket.recv_string(string)
   resposta = MessagePack.unpack(string)
 
-  sleep(0.5)
+  sleep(1)
 end
