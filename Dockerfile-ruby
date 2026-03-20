@@ -4,8 +4,8 @@ WORKDIR /app
 
 RUN apk add --no-cache \
     build-base \
-    zeromq-dev
+    zeromq-dev 
 
-RUN gem install ffi-rzmq
+RUN gem install ffi-rzmq msgpack 
 
 CMD ["ruby", "main.rb"]

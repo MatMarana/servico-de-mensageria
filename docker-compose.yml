@@ -12,71 +12,71 @@ services:
       - 5556:5556
 
 # -------------- PYTHON ---------
-#   servidor-python:
-#     build:
-#      context: .
-#       dockerfile: Dockerfile-python
-# #     image: servidor_python:pyzmq
-#     volumes:
-#       - ./servidor.py:/app/main.py # passar caminho real dos arquivos main
-#     ports:
-#       - 5555:5555
-#     deploy:
-#       replicas: 1
-
-#   cliente:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile-python
-# #    image: cliente_python:pyzmq
-#     volumes:
-#       - ./cliente.py:/app/main.py # passar caminho real dos arquivos main
-#     depends_on:
-#       - servidor-python
-#     deploy:
-#       replicas: 1
-
-# # -------- RUBY -----------
-#   servidor-ruby:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile-ruby
-# #    image: servidor_ruby:gemzmq
-#     volumes:
-#       - ./codigo-ruby/servidor.rb:/app/main.rb
-#     ports:
-#       - 5555:5555
-#     deploy:
-#       replicas: 1
-
-#   cliente:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile-ruby
-# #    image: cliente_ruby:gemzmq
-#     volumes:
-#       - ./codigo-ruby/cliente.rb:/app/main.rb
-#     depends_on:
-#       - servidor-ruby
-#     deploy:
-#       replicas: 1
-
-# -------------- C# -------------
-  servidor-csharp:
+  servidor-python:
     build:
       context: .
-      dockerfile: Dockerfile-csharp
-      args:
-        FOLDER_NAME: Servidor
+      dockerfile: Dockerfile-python
+#     image: servidor_python:pyzmq
+    volumes: 
+      - ./codigo-python/servidor.py:/app/main.py # passar caminho real dos arquivos main
     depends_on:
       - broker
+    deploy:
+      replicas: 1
 
-  cliente-csharp:
+  cliente-python:
     build:
       context: .
-      dockerfile: Dockerfile-csharp
-      args:
-        FOLDER_NAME: Cliente
+      dockerfile: Dockerfile-python
+#    image: cliente_python:pyzmq
+    volumes: 
+      - ./codigo-python/cliente.py:/app/main.py # passar caminho real dos arquivos main
     depends_on:
-      - servidor-csharp
+      - servidor-python
+    deploy:
+      replicas: 1
+
+# -------- RUBY -----------
+  servidor-ruby:
+     build:
+       context: .
+       dockerfile: Dockerfile-ruby
+#    image: servidor_ruby:gemzmq
+     volumes:
+       - ./codigo-ruby/servidor.rb:/app/main.rb
+     depends_on:
+       - broker
+     deploy:
+       replicas: 1
+
+  cliente:
+     build:
+       context: .
+       dockerfile: Dockerfile-ruby
+#    image: cliente_ruby:gemzmq
+     volumes:
+       - ./codigo-ruby/cliente.rb:/app/main.rb
+     depends_on:
+       - servidor-ruby
+     deploy:
+       replicas: 1
+
+# -------------- C# -------------
+#  servidor-csharp:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile-csharp
+#      args:
+#        FOLDER_NAME: Servidor
+#    depends_on:
+#      - broker
+#
+#  cliente-csharp:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile-csharp
+#      args:
+#        FOLDER_NAME: Cliente
+#    depends_on:
+#      - servidor-csharp
 
