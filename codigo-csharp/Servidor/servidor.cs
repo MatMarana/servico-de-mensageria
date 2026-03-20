@@ -21,7 +21,7 @@ class Program
             while (true)
             {
                 string message, response, content, operation, time;
-                message = server.ReceiveFrameString();
+                message = ServerHelpers.GetMessage(server);
 
                 content = ServerHelpers.GetContent(message);
                 operation = ServerHelpers.GetOperation(message);
@@ -61,7 +61,7 @@ class Program
 
             if (i > 0)
             {
-                line += "\nC-Sharp: ";
+                line += "\n";
             }
             line += $"Canal {i}: {channel}";
             channelsList += line;

@@ -1,14 +1,20 @@
 using NetMQ;
 using NetMQ.Sockets;
-
+using MessagePack;
 namespace Utils;
 public class ServerHelpers
 {
     public static void SendToClient(string response, ResponseSocket server)
     {
-        Console.WriteLine($"C-Sharp: {response}");
+        Message shippingObj = new Message
+        {
+            message = response
+        };
+        byte[] binaryData = MessagePackSerializer.Serialize(shippingObj);
+
+        Console.WriteLine($"{response}");
         Thread.Sleep(500);
-        server.SendFrame(response);
+        server.SendFrame(binaryData);
     }
 
     public static HashSet<string> BuildNamesList()
@@ -29,10 +35,17 @@ public class ServerHelpers
             return loadedNames;
         }
 
-        PrintLoadedNames(loadedNames);
         return loadedNames;
     }
 
+    public static string GetMessage(ResponseSocket server)
+    {
+        byte[] responseBytes = server.ReceiveFrameBytes();
+
+        Message responseObj = MessagePackSerializer.Deserialize<Message>(responseBytes);
+
+        return responseObj.message.ToLower();
+    }
     public static string GetTime(string message)
     {
         return message.Split("|")[2].Trim().ToLower();
@@ -46,15 +59,5 @@ public class ServerHelpers
     public static string GetOperation(string message)
     {
         return message.Split("|")[0].Trim().ToLower();
-    }
-
-    static void PrintLoadedNames(HashSet<string> loadedNames)
-    {
-        Console.WriteLine("========================= | Nomes Carregados - C-Sharp | =========================");
-        foreach (string name in loadedNames)
-        {
-            Console.Write($"{name} | ");
-        }
-        Console.WriteLine("\n========================================================================");
     }
 }

@@ -1,6 +1,6 @@
 ﻿using NetMQ;
 using NetMQ.Sockets;
-
+using MessagePack;
 namespace Utils;
 public class ClientHelpers
 {
@@ -14,11 +14,20 @@ public class ClientHelpers
     {
         string message;
 
-        Console.WriteLine($"C-Sharp: {shipping}");
+        Message shippingObj = new Message
+        {
+            message = shipping
+        };
+        byte[] binaryData = MessagePackSerializer.Serialize(shippingObj);
+
+        Console.WriteLine($"{shipping}");
         Thread.Sleep(500);
 
-        client.SendFrame(shipping);
-        message = client.ReceiveFrameString().ToLower();
+        client.SendFrame(binaryData);
+
+        byte[] responseBytes = client.ReceiveFrameBytes();
+        Message responseObj = MessagePackSerializer.Deserialize<Message>(responseBytes);
+        message = responseObj.message.ToLower();
 
         return message;
     }
