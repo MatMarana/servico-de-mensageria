@@ -1,29 +1,59 @@
 STDOUT.sync = true
 
 require "ffi-rzmq"
-require "google/protobuf"
+require "msgpack"
 require "time"
 
-require_relative "ruby-proto_pb.rb"
-require_relative "utils.rb"
-
-lista_nomes_permitidos = ["Henrique", "Leo", "Mateus", "Tiago"]
-lista_logados = []
-
+lista_nomes = ["Ale", "Gabriel", "Giovanni", "Kawan", "Pedro", "Roberto", "Leo", "Henrique"]
 lista_canais = []
 
 context = ZMQ::Context.new
-socket = context.socket(ZMQ::DEALER)
+socket = context.socket(ZMQ::REP)
 
 socket.connect("tcp://broker:5556")
 
 loop do 
+  string = ""
+  socket.recv_string(string)
+  mensagem = MessagePack.unpack(string)
+  puts("#{mensagem["mensagem"]}")
 
-  mensagem = Utils.recebe_request(socket)
-  puts "#{mensagem.mensagem}"
-  
-  reply = MensagemProto::EnviaMensagem.new("mensagem": "OK")
-  reply_bin = MensagemProto::EnviaMensagem.encode(reply)
-  socket.send_string(reply_bin)
+  if lista_nomes.include?(mensagem["nome"])
+    reply = {status: "erro"}.to_msgpack
+    socket.send_string(reply)
+  else
+    reply = {status: "login"}.to_msgpack
+    socket.send_string(reply)
+    break
+  end
 
+end
+
+loop do
+  string = ""
+  socket.recv_string(string)
+  mensagem = MessagePack.unpack(string)
+
+  puts "#{mensagem["mensagem"]}"
+
+  if lista_canais.include?(mensagem["canal"])
+    reply = {status: "erro"}.to_msgpack
+    socket.send_string(reply)
+    break
+  else
+    reply = {status: "sucesso"}.to_msgpack
+    socket.send_string(reply)
+    lista_canais << mensagem["canal"]
+  end
+
+end
+
+loop do 
+  string = ""
+  socket.recv_string(string)
+  mensagem = MessagePack.unpack(string)
+
+  puts "#{mensagem["mensagem"]}"
+  reply = {canal: "#{lista_canais}"}.to_msgpack
+  socket.send_string(reply)
 end

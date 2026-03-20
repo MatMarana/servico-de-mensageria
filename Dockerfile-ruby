@@ -4,16 +4,8 @@ WORKDIR /app
 
 RUN apk add --no-cache \
     build-base \
-    zeromq-dev \
-    protobuf \
-    protobuf-dev
+    zeromq-dev 
 
-RUN gem install ffi-rzmq google-protobuf
-
-COPY codigo-ruby/ruby-proto.proto .
-
-COPY codigo-ruby/utils.rb .
-
-RUN protoc --ruby_out=. ruby-proto.proto
+RUN gem install ffi-rzmq msgpack 
 
 CMD ["ruby", "main.rb"]
