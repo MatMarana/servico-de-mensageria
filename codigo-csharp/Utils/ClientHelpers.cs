@@ -1,6 +1,7 @@
 ﻿using NetMQ;
 using NetMQ.Sockets;
 using MessagePack;
+using System.Collections.Generic;
 namespace Utils;
 public class ClientHelpers
 {
@@ -18,7 +19,7 @@ public class ClientHelpers
         {
             message = shipping
         };
-        byte[] binaryData = MessagePackSerializer.Serialize(shippingObj);
+        byte[] binaryData = MessagePackSerializer.Serialize(shipping);
 
         Console.WriteLine($"{shipping}");
         Thread.Sleep(1000);
@@ -26,8 +27,8 @@ public class ClientHelpers
         client.SendFrame(binaryData);
 
         byte[] responseBytes = client.ReceiveFrameBytes();
-        Message responseObj = MessagePackSerializer.Deserialize<Message>(responseBytes);
-        message = responseObj.message.ToLower();
+        string responseObj = MessagePackSerializer.Deserialize<string>(responseBytes);
+        message = responseObj.ToLower();
 
         return message;
     }

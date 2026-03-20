@@ -1,6 +1,7 @@
 using NetMQ;
 using NetMQ.Sockets;
 using MessagePack;
+using System.Collections.Generic;
 namespace Utils;
 public class ServerHelpers
 {
@@ -10,7 +11,7 @@ public class ServerHelpers
         {
             message = response
         };
-        byte[] binaryData = MessagePackSerializer.Serialize(shippingObj);
+        byte[] binaryData = MessagePackSerializer.Serialize(response);
 
         Console.WriteLine($"{response}");
         Thread.Sleep(1000);
@@ -42,9 +43,9 @@ public class ServerHelpers
     {
         byte[] responseBytes = server.ReceiveFrameBytes();
 
-        Message responseObj = MessagePackSerializer.Deserialize<Message>(responseBytes);
+        string responseObj = MessagePackSerializer.Deserialize<string>(responseBytes);
 
-        return responseObj.message.ToLower();
+        return responseObj.ToLower();
     }
     public static string GetTime(string message)
     {
