@@ -1,45 +1,19 @@
-# Padrões do projeto
-#### Nomes de Branch
-Cada linguagem deve ter sua branch main e suas branchs para cada etapa do projeto
-**Branch main:** Deve seguir o formato `{linguagem}/main`.
-**Exemplo:** `C#/main`
+# Etapas de desenvolvimento
 
-**Branch de desenvolvimento**: Deve seguir o formato `{linguagem}/etapa`
-**Exemplo:** `C#/request-reply`
+## Request-Reply
+## Pub-Sub
+Para essa etapa devemos implementar o pub-sub adicionando um proxy onde cada cliente irá se inscrever (sub) e cada servidor irá se associar (pub).
 
-***
-#### Mensagens do cliente
-Os clientes devem sempre mandar as mensagens nos mesmos padrões, pois o cliente de um pode mandar mensagem para o servidor de outro.
-Para melhorar o debug e identificar qual cliente está mandando a mensagem adicionamos a linguagem que está enviando na hora de printar a mensagem no terminal.
+## Alterações necessárias:
+- **Padronizar o processo de login:** Precisamos criar uma lógica única para o envio do login pelo cliente e criar uma lógica única para a validação do login pelo servidor.
+- **Alterar o processo de criação de canais:** Cada cliente deverá ter uma lista/arquivo.txt que contenha 7 canais, todos os canais devem ser enviados para os servidores, sem validação necessária, apenas envia e o servidor apenas guarda. Para evitar problemas vamos garantir que não tenha canais repetidos entre as listas/arquivos.txt
+- **Listagem de canais apenas uma vez:** Cada cliente deverá pedir a listagem de canais apenas uma vez, armazenar essa lista e escolher, aleatoriamente, 3 desses canais para se inscrever.
 
-**Padrão de envio:** `{Operação}|{conteudo}|{timestamp}`
-**Exemplo:** `login|albertini|19:17:21`
+# Novas funcionalidades
+- **Implementar o proxy:** Vamos montar um novo container para o proxy, podemos fazer ele em python mesmo para facilitar, como iremos utilziar containers separados as portas podem ser as mesmas (5555 e 5556)
+- **Se inscrever em canais:** Os clientes devem se inscrever nos canais que querem receber as mensagens.
+- **Envio de mensagens dos canais:** Os clientes para devem constantemente enviando requisições de mensagem que eles querem que o servidor publique, esse envio de requisição deverá ser através do brocker
+- **Publicação de mensagens:** Os servidores irão receber a requisição e publicar no canal (proxy) e depois enviar uma resposta para o cliente através do brocker.
+- **Receber mensagens:** Como os clientes irão se inscrever em canais eles vão receber as mensagens através do proxy (inclusive mensagens que ele mesmo fez a requisição de existir)
+- **Persitência de dados:** Os servidores devem armazenar as mensagens enviadas em um txt, cada servidor deve ter seus próprios txts.
 
-**Padrão de print no terminal:** `{mensagem}`
-**Exemplo:** `login|albertini|19:17:21`
-
-**Todas as mensagens devem ser enviadas em letras minusculas**.
-
-***
-#### Mensagens do servidor
-Os servidores devem sempre mandar as respostas nos mesmos padrões, pois o servidor feito em uma linguagem pode responder o cliente feito em outra.
-Para melhorar o debug e identificar qual servidor está respondendo a mensagem adicionamos a linguagem que está enviando na hora de printar a mensagem no terminal.
-
-**Padrão de envio:**
-A resposta do servidor pode variar de acordo com a operacao enviada pelo cliente, as possíveis respostas são:
-**Caso operação = login:**
-- "login" se o conteúdo ainda não existir no servidor
-- "erro" se já existir
-
-**Caso operação = canais:**
-- "sucesso" se o conteúdo ainda não existir no servidor
-- "erro" se já existir
-
-**Caso operação = listar:**
-- [lista de todos os canais do servidor]
-
-
-**Padrão de print no terminal:** `{resposta}`
-**Exemplo:** `erro`
-
-**Todas as mensagens devem ser enviadas em letras minusculas**.
