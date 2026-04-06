@@ -11,24 +11,37 @@ services:
       - 5555:5555
       - 5556:5556
 
-# -------------- PYTHON ---------
-  servidor-python:
-    build:
-      context: .
-      dockerfile: Dockerfile-python
-    volumes:
-      - ./codigo-python/servidor.py:/app/main.py # passar caminho real dos arquivos main
-    depends_on:
-      - broker
 
-  cliente-python:
+# ------------- PROXY -----------
+  proxy:
     build:
       context: .
       dockerfile: Dockerfile-python
+    container_name: proxy
     volumes:
-      - ./codigo-python/cliente.py:/app/main.py # passar caminho real dos arquivos main
-    depends_on:
-      - servidor-python
+      - ./proxy/proxy.py:/app/main.py
+    ports:
+      - 5557:5557
+      - 5558:5558
+
+# -------------- PYTHON ---------
+#  servidor-python:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile-python
+#    volumes:
+#      - ./codigo-python/servidor.py:/app/main.py # passar caminho real dos arquivos main
+#    depends_on:
+#      - broker
+
+#  cliente-python:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile-python
+#    volumes:
+#      - ./codigo-python/cliente.py:/app/main.py # passar caminho real dos arquivos main
+#    depends_on:
+#      - servidor-python
 
 # -------- RUBY -----------
   servidor-ruby:
@@ -39,6 +52,7 @@ services:
        - ./codigo-ruby/servidor.rb:/app/main.rb
      depends_on:
        - broker
+       - proxy
 
   cliente-ruby:
     build:
@@ -51,21 +65,21 @@ services:
       - servidor-ruby
 
 # -------------- C# -------------
-  servidor-csharp:
-    build:
-      context: .
-      dockerfile: Dockerfile-csharp
-      args:
-        FOLDER_NAME: Servidor
-    depends_on:
-      - broker
+#  servidor-csharp:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile-csharp
+#      args:
+#        FOLDER_NAME: Servidor
+#    depends_on:
+#      - broker
 
-  cliente-csharp:
-    build:
-      context: .
-      dockerfile: Dockerfile-csharp
-      args:
-        FOLDER_NAME: Cliente
-    depends_on:
-      - servidor-csharp
+#  cliente-csharp:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile-csharp
+#      args:
+#        FOLDER_NAME: Cliente
+#    depends_on:
+#      - servidor-csharp
 
