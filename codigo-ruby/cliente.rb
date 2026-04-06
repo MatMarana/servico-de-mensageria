@@ -9,65 +9,77 @@ nomes_canais = ["Sistemas Distribuidos", "Jogos", "IA", "Engenharia de Software"
 
 context = ZMQ::Context.new
 
-socket = context.socket(ZMQ::REQ)
-socket.connect("tcp://broker:5555")
+#socket = context.socket(ZMQ::REQ)
+#socket.connect("tcp://broker:5555")
+
+subscriber = context.socket(ZMQ::SUB)
+subscriber.connect("tcp://proxy:5557")
+subscriber.setsockopt(ZMQ::SUBSCRIBE, "")
+
+#loop do
+#  nome = nomes_login.sample
+#  string = ""
+#  time = Time.now.strftime("%H:%M:%S")
+  
+#  mensagem_formatada = "login|#{nome}|#{time}"
+#  puts "#{mensagem_formatada}"
+
+#  mensagem = (mensagem_formatada).to_msgpack
+#  socket.send_string(mensagem)
+  
+#  socket.recv_string(string)
+#  resposta = MessagePack.unpack(string)
+  
+#  if resposta == "login"
+#    break
+#  end
+
+#  sleep(1)
+
+#end
+
+#loop do
+#  canal = nomes_canais.sample
+#  string = ""
+#  time = Time.now.strftime("%H:%M:%S")
+
+#  mensagem_formatada = "canais|#{canal}|#{time}"
+#  puts "#{mensagem_formatada}"
+
+#  mensagem = (mensagem_formatada).to_msgpack
+#  socket.send_string(mensagem)
+
+#  socket.recv_string(string)
+#  resposta = MessagePack.unpack(string)
+
+#  if resposta == "erro"
+#    break
+#  end
+
+#  sleep(1)
+#end
+
+#loop do 
+#  string = ""
+#  time = Time.now.strftime("%H:%M:%S")
+
+#  mensagem_formatada = "listar||#{time}"
+
+#  puts "#{mensagem_formatada}"
+
+#  mensagem = (mensagem_formatada).to_msgpack
+#  socket.send_string(mensagem)
+  
+#  socket.recv_string(string)
+#  resposta = MessagePack.unpack(string)
+
+#  sleep(1)
+#end
 
 loop do
-  nome = nomes_login.sample
-  string = ""
-  time = Time.now.strftime("%H:%M:%S")
-  
-  mensagem_formatada = "login|#{nome}|#{time}"
-  puts "#{mensagem_formatada}"
+  mensagem_teste_bin = ''
+  subscriber.recv_string(mensagem_teste_bin)
+  mensagem_teste = MessagePack.unpack(mensagem_teste_bin)
 
-  mensagem = (mensagem_formatada).to_msgpack
-  socket.send_string(mensagem)
-  
-  socket.recv_string(string)
-  resposta = MessagePack.unpack(string)
-  
-  if resposta == "login"
-    break
-  end
-
-  sleep(1)
-
-end
-
-loop do
-  canal = nomes_canais.sample
-  string = ""
-  time = Time.now.strftime("%H:%M:%S")
-
-  mensagem_formatada = "canais|#{canal}|#{time}"
-  puts "#{mensagem_formatada}"
-
-  mensagem = (mensagem_formatada).to_msgpack
-  socket.send_string(mensagem)
-
-  socket.recv_string(string)
-  resposta = MessagePack.unpack(string)
-
-  if resposta == "erro"
-    break
-  end
-
-  sleep(1)
-end
-
-loop do 
-  string = ""
-  time = Time.now.strftime("%H:%M:%S")
-
-  mensagem_formatada = "listar||#{time}"
-
-  puts "#{mensagem_formatada}"
-
-  mensagem = (mensagem_formatada).to_msgpack
-  socket.send_string(mensagem)
-  
-  socket.recv_string(string)
-  resposta = MessagePack.unpack(string)
-
-  sleep(1)
+  puts "#{mensagem_teste}"
 end
