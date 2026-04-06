@@ -25,23 +25,24 @@ services:
       - 5558:5558
 
 # -------------- PYTHON ---------
-#  servidor-python:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile-python
-#    volumes:
-#      - ./codigo-python/servidor.py:/app/main.py # passar caminho real dos arquivos main
-#    depends_on:
-#      - broker
+  servidor-python:
+    build:
+      context: .
+      dockerfile: Dockerfile-python
+    volumes:
+      - ./codigo-python/servidor.py:/app/main.py # passar caminho real dos arquivos main
+    depends_on:
+      - broker
+      - proxy
 
-#  cliente-python:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile-python
-#    volumes:
-#      - ./codigo-python/cliente.py:/app/main.py # passar caminho real dos arquivos main
-#    depends_on:
-#      - servidor-python
+  cliente-python:
+    build:
+      context: .
+      dockerfile: Dockerfile-python
+    volumes:
+      - ./codigo-python/cliente.py:/app/main.py # passar caminho real dos arquivos main
+    depends_on:
+      - servidor-python
 
 # -------- RUBY -----------
   servidor-ruby:
@@ -65,21 +66,21 @@ services:
       - servidor-ruby
 
 # -------------- C# -------------
-#  servidor-csharp:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile-csharp
-#      args:
-#        FOLDER_NAME: Servidor
-#    depends_on:
-#      - broker
+  servidor-csharp:
+    build:
+      context: .
+      dockerfile: Dockerfile-csharp
+      args:
+        FOLDER_NAME: Servidor
+    depends_on:
+      - broker
 
-#  cliente-csharp:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile-csharp
-#      args:
-#        FOLDER_NAME: Cliente
-#    depends_on:
-#      - servidor-csharp
+  cliente-csharp:
+    build:
+      context: .
+      dockerfile: Dockerfile-csharp
+      args:
+        FOLDER_NAME: Cliente
+    depends_on:
+      - servidor-csharp
 
