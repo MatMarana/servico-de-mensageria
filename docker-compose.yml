@@ -12,58 +12,58 @@ services:
       - 5556:5556
 
 
-# ------------- PROXY -----------
-  proxy:
-    build:
-      context: .
-      dockerfile: Dockerfile-python
-    container_name: proxy
-    volumes:
-      - ./proxy/proxy.py:/app/main.py
-    ports:
-      - 5557:5557
-      - 5558:5558
+# # ------------- PROXY -----------
+#   proxy:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile-python
+#     container_name: proxy
+#     volumes:
+#       - ./proxy/proxy.py:/app/main.py
+#     ports:
+#       - 5557:5557
+#       - 5558:5558
 
-# -------------- PYTHON ---------
-  servidor-python:
-    build:
-      context: .
-      dockerfile: Dockerfile-python
-    volumes:
-      - ./codigo-python/servidor.py:/app/main.py # passar caminho real dos arquivos main
-    depends_on:
-      - broker
-      - proxy
+# # -------------- PYTHON ---------
+#   servidor-python:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile-python
+#     volumes:
+#       - ./codigo-python/servidor.py:/app/main.py # passar caminho real dos arquivos main
+#     depends_on:
+#       - broker
+#       - proxy
 
-  cliente-python:
-    build:
-      context: .
-      dockerfile: Dockerfile-python
-    volumes:
-      - ./codigo-python/cliente.py:/app/main.py # passar caminho real dos arquivos main
-    depends_on:
-      - servidor-python
+#   cliente-python:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile-python
+#     volumes:
+#       - ./codigo-python/cliente.py:/app/main.py # passar caminho real dos arquivos main
+#     depends_on:
+#       - servidor-python
 
-# -------- RUBY -----------
-  servidor-ruby:
-     build:
-       context: .
-       dockerfile: Dockerfile-ruby
-     volumes:
-       - ./codigo-ruby/servidor.rb:/app/main.rb
-     depends_on:
-       - broker
-       - proxy
+# # -------- RUBY -----------
+#   servidor-ruby:
+#      build:
+#        context: .
+#        dockerfile: Dockerfile-ruby
+#      volumes:
+#        - ./codigo-ruby/servidor.rb:/app/main.rb
+#      depends_on:
+#        - broker
+#        - proxy
 
-  cliente-ruby:
-    build:
-      context: .
-      dockerfile: Dockerfile-ruby
-    image: cliente_ruby:gemzmq
-    volumes:
-      - ./codigo-ruby/cliente.rb:/app/main.rb
-    depends_on:
-      - servidor-ruby
+#   cliente-ruby:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile-ruby
+#     image: cliente_ruby:gemzmq
+#     volumes:
+#       - ./codigo-ruby/cliente.rb:/app/main.rb
+#     depends_on:
+#       - servidor-ruby
 
 # -------------- C# -------------
   servidor-csharp:

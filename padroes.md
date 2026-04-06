@@ -38,7 +38,6 @@ A resposta do servidor pode variar de acordo com a operacao enviada pelo cliente
 **Caso operação = listar:**
 - [lista de todos os canais do servidor]
 
-
 **Padrão de print no terminal:** `{resposta}`
 **Exemplo:** `erro`
 

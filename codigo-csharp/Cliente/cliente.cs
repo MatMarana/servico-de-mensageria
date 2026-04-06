@@ -15,7 +15,7 @@ class Program
         using (var client = new RequestSocket())
         {
             client.Connect("tcp://broker:5555");
-            int i = 0;
+            int namesIndex = 0, channelsIndex = 0;
 
             while (true)
             {
@@ -23,11 +23,13 @@ class Program
                 switch (step)
                 {
                     case "login":
-                        message = Login(names[i], client);
+                        message = Login(names[namesIndex], client);
+                        namesIndex++;
                         break;
 
                     case "canais":
-                        message = Channels(channels, client);
+                        message = Channels(channels[channelsIndex], client);
+                        channelsIndex++;
                         break;
 
                     case "listar":
@@ -41,7 +43,6 @@ class Program
 
                 step = GetStep(message, step);
                 Thread.Sleep(1000);
-                i++;
             }
         }
     }
@@ -53,15 +54,13 @@ class Program
         shipping = ClientHelpers.FormatShipping("listar", "");
         message = ClientHelpers.SendToServer(shipping, client);
 
-        return message;
+        return ClientHelpers.FormatChannelsList(message);
     }
 
-    static string Channels(string[] channels, RequestSocket client)
+    static string Channels(string channel, RequestSocket client)
     {
-        string channel, shipping, message;
-        int index = Random.Shared.Next(0, channels.Length);
+        string shipping, message;
 
-        channel = channels[index];
         shipping = ClientHelpers.FormatShipping("canais", channel);
         message = ClientHelpers.SendToServer(shipping, client);
 
@@ -89,6 +88,12 @@ class Program
         {
             return "listar";
         }
+
+        if (step == "listar")
+        {
+            return "...";
+        }
+
         return step;
     }
 }
