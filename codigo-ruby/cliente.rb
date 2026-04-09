@@ -5,7 +5,8 @@ require "msgpack"
 require "time"
 
 nomes_login = ["Ale", "Gabriel", "Giovanni", "Henrique", "Kawan", "Leo", "Mateus", "Pedro", "Roberto", "Tiago"]
-nomes_canais = ["Sistemas Distribuidos", "Jogos", "IA", "Engenharia de Software", "Gestão de Projetos", "TCC"]
+nomes_canais = ["IA", "TCC", "ESTRUTURA DE DADOS", "COMPLEXIDADE DE ALGORITMOS", "ARQUITETURA DE COMPUTADORES"]
+canais_inscritos = []
 
 context = ZMQ::Context.new
 
@@ -38,8 +39,7 @@ loop do
 
 end
 
-loop do
-  canal = nomes_canais.sample
+nomes_canais.each do |canal|
   string = ""
   time = Time.now.strftime("%H:%M:%S")
 
@@ -58,23 +58,23 @@ loop do
 
   sleep(1)
 end
+ 
+string = ""
+time = Time.now.strftime("%H:%M:%S")
 
-loop do 
-  string = ""
-  time = Time.now.strftime("%H:%M:%S")
+mensagem_formatada = "listar||#{time}"
 
-  mensagem_formatada = "listar||#{time}"
+puts "#{mensagem_formatada}"
 
-  puts "#{mensagem_formatada}"
-
-  mensagem = (mensagem_formatada).to_msgpack
-  socket.send_string(mensagem)
+mensagem = (mensagem_formatada).to_msgpack
+socket.send_string(mensagem)
   
-  socket.recv_string(string)
-  resposta = MessagePack.unpack(string)
+socket.recv_string(string)
+resposta = MessagePack.unpack(string)
 
-  sleep(1)
-end
+canais_inscritos = resposta.scan(/:\s*(.+)/).flatten.map(&:strip)
+
+sleep(1)
 
 loop do
   mensagem_teste_bin = ''

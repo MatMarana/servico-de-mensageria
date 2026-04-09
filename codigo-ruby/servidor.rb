@@ -50,11 +50,14 @@ loop do
       reply = ""
       contador = 0
       lista_canais.each  do |canal|
-        reply += "#{contador}: #{canal} \n"
+        reply += "canal #{contador}: #{canal} \n"
         contador += 1
       end
       reply_bin = (reply).to_msgpack
       socket.send_string(reply_bin)
+      sleep(1)
+      puts "#{reply}"
+      break
   end
   sleep(1)
   puts "#{reply}"
