@@ -64,10 +64,26 @@ loop do
   
 end
 
-  loop do
-    mensagem_teste = "Mensagem publicada pelo servidor"
-    mensagem_teste_bin = (mensagem_teste).to_msgpack
-    publisher.send_string(mensagem_teste_bin)
-    sleep 1
-  end
+loop do  
+  mensagem_canal_bin = ''
+  socket.recv_string(mensagem_canal_bin)
+
+  mensagem_canal = MessagePack.unpack(mensagem_canal_bin)
+
+  socket.send_string("OK")
+
+  divide_mensagem = mensagem_canal.split("|")
+  canal = divide_mensagem[0]
+  mensagem = divide_mensagem[1]
+
+  publisher.send_string(canal, ZMQ::SNDMORE)
+
+  mensagem_publicada_bin = (mensagem).to_msgpack
+  publisher.send_string(mensagem_publicada_bin)
+  sleep(1)
+    
+  puts "#{canal}"
+  puts "#{mensagem}"
+
+end
 

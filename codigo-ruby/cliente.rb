@@ -15,7 +15,6 @@ socket.connect("tcp://broker:5555")
 
 subscriber = context.socket(ZMQ::SUB)
 subscriber.connect("tcp://proxy:5557")
-subscriber.setsockopt(ZMQ::SUBSCRIBE, "")
 
 loop do
   nome = nomes_login.sample
@@ -76,10 +75,25 @@ canais_inscritos = resposta.scan(/:\s*(.+)/).flatten.map(&:strip)
 
 sleep(1)
 
-loop do
-  mensagem_teste_bin = ''
-  subscriber.recv_string(mensagem_teste_bin)
-  mensagem_teste = MessagePack.unpack(mensagem_teste_bin)
+canais_inscritos.each do |canal|
+  subscriber.setsockopt(ZMQ::SUBSCRIBE, canal)
+end
 
-  puts "#{mensagem_teste}"
+loop do
+  canal = nomes_canais.sample
+  mensagem_cliente = "#{canal}|mensagem"
+  mensagem_cliente_bin = (mensagem_cliente).to_msgpack
+  socket.send_string(mensagem_cliente_bin)
+
+  puts "#{mensagem_cliente}"
+
+  resposta = ''
+  socket.recv_string(resposta)
+
+  topico = ''
+  subscriber.recv_string(topico)
+
+  mensagem_publicada_bin = ''
+  subscriber.recv_string(mensagem_publicada_bin)
+  mensagem_teste = MessagePack.unpack(mensagem_publicada_bin)
 end
