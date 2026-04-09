@@ -75,3 +75,5 @@ if canal_bool and listar:
         socket.send(msgpack.packb(mensagem))
         resposta_bin = socket.recv()
 
+    
+

@@ -44,7 +44,7 @@ while True:
         else:
             resposta = "login"
     elif operacao == "canais":
-        if conteudo not in canais_recebidos:
+        if conteudo != "eof":
             saida_operacao = adiciona_canal(canais_recebidos,conteudo)
             resposta = "sucesso"
         else:
