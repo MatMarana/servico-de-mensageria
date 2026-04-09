@@ -12,17 +12,17 @@ services:
       - 5556:5556
 
 
-# # ------------- PROXY -----------
-#   proxy:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile-python
-#     container_name: proxy
-#     volumes:
-#       - ./proxy/proxy.py:/app/main.py
-#     ports:
-#       - 5557:5557
-#       - 5558:5558
+# ------------- PROXY -----------
+  proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile-python
+    container_name: proxy
+    volumes:
+      - ./proxy/proxy.py:/app/main.py
+    ports:
+      - 5557:5557
+      - 5558:5558
 
 # # -------------- PYTHON ---------
 #   servidor-python:
