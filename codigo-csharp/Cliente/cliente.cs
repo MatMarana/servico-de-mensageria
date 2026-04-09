@@ -12,8 +12,8 @@ class Program
         string[] channels = ClientHelpers.ReadFile("channels.txt");
         string[] subscribedChannels = new string[3];
 
-        int namesIndex = 0, channelsIndex = 0;
-
+        int namesIndex = 0, channelsIndex = 0, incremento = 0;
+        
         using var subSocket = new SubscriberSocket();
         using var client = new RequestSocket();
 
@@ -46,7 +46,8 @@ class Program
                     break;
 
                 case "message request":
-                    message = "...";
+                    message = MessageRequest(client, subscribedChannels, incremento);
+                    incremento++;
                     break;
 
                 default:
@@ -59,17 +60,19 @@ class Program
         }
     }
 
-    static string MessageRequest(RequestSocket client, string[] subscribedChannels)
+    static string MessageRequest(RequestSocket client, string[] subscribedChannels, int incremento)
     {
         string shipping, message;
         Random random = new Random();
 
         int randomIndex = random.Next(0, 3);
-
-        shipping = ClientHelpers.FormatShipping(subscribedChannels[randomIndex], "mensagem");
+        string mensagem = subscribedChannels[randomIndex] + "-" + "Rock N Roll " + incremento.ToString();
+        shipping = ClientHelpers.FormatShipping("canal", mensagem);
         message = ClientHelpers.SendToServer(shipping, client);
 
+        return message;
     }
+    
     static string[] Subscribing(SubscriberSocket subSocket, string receivedChannels)
     {
         string[] subscribedChannels = new string[3];
@@ -82,7 +85,6 @@ class Program
         subSocket.Subscribe(subscribedChannels[0]);
         subSocket.Subscribe(subscribedChannels[1]);
         subSocket.Subscribe(subscribedChannels[2]);
-        Console.WriteLine("Se inscreveu");
 
         return subscribedChannels;
     }
