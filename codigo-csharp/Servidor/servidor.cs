@@ -16,15 +16,17 @@ class Program
         HashSet<string> loadedChannels = new HashSet<string>();
 
         using (var server = new ResponseSocket())
+        using (var pubSocket = new PublisherSocket())
         {
             server.Connect("tcp://broker:5556");
+            pubSocket.Connect("tcp://proxy:5558");
             while (true)
             {
                 string message, response, content, operation, time;
-                message = ServerHelpers.GetMessage(server);
 
-                content = ServerHelpers.GetContent(message);
+                message = ServerHelpers.GetMessage(server);
                 operation = ServerHelpers.GetOperation(message);
+                content = ServerHelpers.GetContent(message);
                 time = ServerHelpers.GetTime(message);
 
                 switch (operation)
@@ -41,6 +43,10 @@ class Program
                         response = ChannelsList(loadedChannels);
                         break;
 
+                    case "canal":
+                        response = PublishMessage(content, pubSocket);
+                        break;
+
                     default:
                         response = "...";
                         break;
@@ -48,6 +54,20 @@ class Program
                 ServerHelpers.SendToClient(response, server);
             }
         }
+    }
+
+    static string PublishMessage(string content, PublisherSocket pubSocket)
+    {
+        string[] parts = content.Split('-', 2);
+
+        string canal = parts[0].Trim();
+        string mensagemCorpo = parts[1].Trim();
+
+        pubSocket.SendMoreFrame(canal).SendFrame(mensagemCorpo);
+
+        Console.WriteLine($"Canal: {canal} | Msg: {mensagemCorpo}");
+
+        return "mensagem_publicada";
     }
 
     static string ChannelsList(HashSet<string> loadedChannels)

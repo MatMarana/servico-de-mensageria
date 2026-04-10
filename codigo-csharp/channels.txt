@@ -1,1 +1,1 @@
-Kiss,Rock,Roll,Nightwish,RedHot,Black Sabbath,Pedra Leticia,Bad Relligion,Raimundos,CBR Jr,EOF
+Kiss,Nightwish,RedHot,Black Sabbath,Pedra Leticia,Bad Relligion,Raimundos,CBR Jr,EOF
