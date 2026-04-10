@@ -4,9 +4,11 @@ import time
 from datetime import datetime
 from random import randint
 
+#Variaveis:
 ARQUIVO_LOGIN = "usuarioLogin.txt"
 ARQUIVO_CANAIS = "canais.txt"
 
+#Funções:
 def carregar_nomes():
     with open(ARQUIVO_LOGIN, "r") as f:
         conteudo = f.read().strip()
@@ -19,10 +21,25 @@ def carregar_canais():
         duplicado = randint(0, len(conteudo) - 1)
         conteudo.append(conteudo[duplicado])
         return conteudo
+    
+def extrair_canais(texto:str):
+    linhas = texto.strip().split("\n")
+    canais = []
+
+    for linha in linhas:
+        # separa pelo ":" e pega a parte do nome
+        partes = linha.split(":", 1)
+        if len(partes) > 1:
+            canal = partes[1].strip()
+            canais.append(canal)    
+
+#============================================
 
 
 context = zmq.Context()
 socket = context.socket(zmq.REQ)
+sub = context.socket(zmq.SUB)
+
 
 # IMPORTANTE para docker
 socket.connect("tcp://broker:5555")
@@ -81,7 +98,9 @@ if canal_bool and listar:
 
 
 if not listar and not subscriber:
-    
+    canais_extraidos = extrair_canais(resposta)
+    lista_canais = canais_extraidos.split(",")
+
     # resposta_bin = socket.recv()
     # resposta = msgpack.unpackb(resposta_bin, raw=False)
 
