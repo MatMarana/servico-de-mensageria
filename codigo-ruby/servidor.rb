@@ -36,7 +36,7 @@ loop do
         socket.send_string(reply_bin)
       end
     when "canais"
-      if lista_canais.include?(informacao)
+      if informacao == "EOF"
         reply = "erro"
         reply_bin = (reply).to_msgpack
         socket.send_string(reply_bin)
@@ -57,33 +57,33 @@ loop do
       socket.send_string(reply_bin)
       sleep(1)
       puts "#{reply}"
-      break
+    when "canal"
+      conteudo = informacao.split("-")
+      canal = conteudo[0]
+      mensagem = conteudo[1]
+      if conteudo
+        reply = "ok"
+        reply_bin = (reply).to_msgpack
+        socket.send_string(reply_bin)
+      else
+        reply = "erro"
+        reply_bin = (reply).to_msgpack
+        socket.send_string(reply_bin)
+      end
+      publisher.send_string(canal, ZMQ::SNDMORE)
+      mensagem_bin = (mensagem).to_msgpack
+      publisher.send_string(mensagem_bin)
   end
   sleep(1)
   puts "#{reply}"
   
 end
 
-loop do  
-  mensagem_canal_bin = ''
-  socket.recv_string(mensagem_canal_bin)
 
-  mensagem_canal = MessagePack.unpack(mensagem_canal_bin)
 
-  socket.send_string("OK")
 
-  divide_mensagem = mensagem_canal.split("|")
-  canal = divide_mensagem[0]
-  mensagem = divide_mensagem[1]
 
-  publisher.send_string(canal, ZMQ::SNDMORE)
 
-  mensagem_publicada_bin = (mensagem).to_msgpack
-  publisher.send_string(mensagem_publicada_bin)
-  sleep(1)
     
-  puts "#{canal}"
-  puts "#{mensagem}"
 
-end
 
