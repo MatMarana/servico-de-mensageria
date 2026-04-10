@@ -14,7 +14,10 @@ def carregar_usuarios():
 
 context = zmq.Context()
 socket = context.socket(zmq.REP)
+sub = context.socket(zmq.SUB)
+
 socket.connect("tcp://broker:5556")
+sub.connect("tcp://proxy:5558")
 
 print("---------------------------------")
 print("Servidor Iniciado", flush=True)
@@ -53,6 +56,7 @@ while True:
         resposta = saida_operacao
     elif operacao == "canal":
             lista_conteudo= conteudo.split("-")
+            canal = lista_conteudo[0]
             resposta = lista_conteudo[1] 
     else:
         resposta = "erro inesperado"

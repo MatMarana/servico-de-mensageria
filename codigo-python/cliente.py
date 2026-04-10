@@ -45,7 +45,7 @@ sub = context.socket(zmq.SUB)
 
 # IMPORTANTE para docker
 socket.connect("tcp://broker:5555")
-sub.connect("tcp://proxy:5555")
+sub.connect("tcp://proxy:5557")
 
 #Carregando os arquivos txts:
 nomes = carregar_nomes()
