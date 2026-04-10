@@ -5,7 +5,9 @@ require "msgpack"
 require "time"
 
 nomes_login = ["Ale", "Gabriel", "Giovanni", "Henrique", "Kawan", "Leo", "Mateus", "Pedro", "Roberto", "Tiago"]
-nomes_canais = ["Sistemas Distribuidos", "Jogos", "IA", "Engenharia de Software", "Gestão de Projetos", "TCC"]
+nomes_canais = ["IA", "TCC", "ESTRUTURA DE DADOS", "COMPLEXIDADE DE ALGORITMOS", "ARQUITETURA DE COMPUTADORES", "EOF"]
+canais_cadastrados = []
+canais_inscritos = []
 
 context = ZMQ::Context.new
 
@@ -14,22 +16,22 @@ socket.connect("tcp://broker:5555")
 
 subscriber = context.socket(ZMQ::SUB)
 subscriber.connect("tcp://proxy:5557")
-subscriber.setsockopt(ZMQ::SUBSCRIBE, "")
 
 loop do
   nome = nomes_login.sample
   string = ""
   time = Time.now.strftime("%H:%M:%S")
-  
+
   mensagem_formatada = "login|#{nome}|#{time}"
   puts "#{mensagem_formatada}"
-
+  time = Time.now.strftime("%H:%M:%S")
   mensagem = (mensagem_formatada).to_msgpack
   socket.send_string(mensagem)
-  
+  sleep(1)
+
   socket.recv_string(string)
   resposta = MessagePack.unpack(string)
-  
+
   if resposta == "login"
     break
   end
@@ -38,8 +40,7 @@ loop do
 
 end
 
-loop do
-  canal = nomes_canais.sample
+nomes_canais.each do |canal|
   string = ""
   time = Time.now.strftime("%H:%M:%S")
 
@@ -48,6 +49,7 @@ loop do
 
   mensagem = (mensagem_formatada).to_msgpack
   socket.send_string(mensagem)
+  sleep(1)
 
   socket.recv_string(string)
   resposta = MessagePack.unpack(string)
@@ -59,27 +61,54 @@ loop do
   sleep(1)
 end
 
-loop do 
-  string = ""
-  time = Time.now.strftime("%H:%M:%S")
+string = ""
+time = Time.now.strftime("%H:%M:%S")
 
-  mensagem_formatada = "listar||#{time}"
+mensagem_formatada = "listar||#{time}"
 
-  puts "#{mensagem_formatada}"
+puts "#{mensagem_formatada}"
 
-  mensagem = (mensagem_formatada).to_msgpack
-  socket.send_string(mensagem)
-  
-  socket.recv_string(string)
-  resposta = MessagePack.unpack(string)
+mensagem = (mensagem_formatada).to_msgpack
+socket.send_string(mensagem)
+sleep(1)
 
-  sleep(1)
+socket.recv_string(string)
+resposta = MessagePack.unpack(string)
+
+canais_cadastrados = resposta.scan(/:\s*(.+)/).flatten.map(&:strip)
+
+sleep(1)
+
+3.times do
+  canal = canais_cadastrados.sample
+  canais_inscritos << canal
+  subscriber.setsockopt(ZMQ::SUBSCRIBE, canal)
 end
 
-loop do
-  mensagem_teste_bin = ''
-  subscriber.recv_string(mensagem_teste_bin)
-  mensagem_teste = MessagePack.unpack(mensagem_teste_bin)
+contador = 0
 
-  puts "#{mensagem_teste}"
+loop do
+  canal = canais_inscritos.sample
+  time = Time.now.strftime("%H:%M:%S")
+
+  mensagem_cliente = "canal|#{canal}-Mensagem Numero #{contador}|#{time}"
+  mensagem_cliente_bin = (mensagem_cliente).to_msgpack
+  socket.send_string(mensagem_cliente_bin)
+  sleep(1)
+
+  puts "#{mensagem_cliente}"
+
+  resposta = ''
+  socket.recv_string(resposta)
+
+  topico = ''
+  subscriber.recv_string(topico)
+  sleep(1)
+
+  mensagem_publicada = ''
+  subscriber.recv_string(mensagem_publicada)
+  puts "RECEBENDO: #{topico} | MSG: #{mensagem_publicada}"
+  contador = contador + 1
+  sleep(1)
+
 end

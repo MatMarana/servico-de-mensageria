@@ -14,11 +14,11 @@ publisher = context.socket(ZMQ::PUB)
 socket.connect("tcp://broker:5556")
 publisher.connect("tcp://proxy:5558")
 
-loop do 
+loop do
   string = ""
   socket.recv_string(string)
   mensagem = MessagePack.unpack(string)
-  
+
   partes = mensagem.split("|")
   operacao = partes[0]
   informacao = partes[1]
@@ -36,7 +36,7 @@ loop do
         socket.send_string(reply_bin)
       end
     when "canais"
-      if lista_canais.include?(informacao)
+      if informacao == "EOF"
         reply = "erro"
         reply_bin = (reply).to_msgpack
         socket.send_string(reply_bin)
@@ -50,21 +50,32 @@ loop do
       reply = ""
       contador = 0
       lista_canais.each  do |canal|
-        reply += "#{contador}: #{canal} \n"
+        reply += "canal #{contador}: #{canal} \n"
         contador += 1
       end
       reply_bin = (reply).to_msgpack
       socket.send_string(reply_bin)
+      sleep(1)
+      puts "#{reply}"
+    when "canal"
+      conteudo = informacao.split("-")
+      canal = conteudo[0]
+      mensagem = conteudo[1]
+      if conteudo
+        reply = "ok"
+        reply_bin = (reply).to_msgpack
+        socket.send_string(reply_bin)
+      else
+        reply = "erro"
+        reply_bin = (reply).to_msgpack
+        socket.send_string(reply_bin)
+      end
+      publisher.send_string(canal, ZMQ::SNDMORE)
+      sleep(1)
+      publisher.send_string(mensagem)
+      puts "PUBLICANDO: #{canal} | MSG: #{mensagem}"
   end
   sleep(1)
   puts "#{reply}"
-  
+  sleep(1)
 end
-
-  loop do
-    mensagem_teste = "Mensagem publicada pelo servidor"
-    mensagem_teste_bin = (mensagem_teste).to_msgpack
-    publisher.send_string(mensagem_teste_bin)
-    sleep 1
-  end
-

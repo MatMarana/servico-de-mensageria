@@ -60,6 +60,7 @@ while True:
             mensagem_conteudo = lista_conteudo[1]
             pub.send_string(canal, flags=zmq.SNDMORE)
             pub.send_string(mensagem_conteudo)
+            print(f"PUBLICANDO: {canal} | MSG:{mensagem_conteudo}")
             resposta = "ok" 
     else:
         resposta = "erro inesperado"

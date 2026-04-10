@@ -10,8 +10,6 @@ services:
     ports:
       - 5555:5555
       - 5556:5556
-
-
 # ------------- PROXY -----------
   proxy:
     build:
@@ -25,62 +23,62 @@ services:
       - 5558:5558
 
 # # -------------- PYTHON ---------
-#   servidor-python:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile-python
-#     volumes:
-#       - ./codigo-python/servidor.py:/app/main.py # passar caminho real dos arquivos main
-#     depends_on:
-#       - broker
-#       - proxy
+  servidor-python:
+    build:
+      context: .
+      dockerfile: Dockerfile-python
+    volumes:
+      - ./codigo-python/servidor.py:/app/main.py # passar caminho real dos arquivos main
+    depends_on:
+      - broker
+      - proxy
 
-#   cliente-python:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile-python
-#     volumes:
-#       - ./codigo-python/cliente.py:/app/main.py # passar caminho real dos arquivos main
-#     depends_on:
-#       - servidor-python
+  cliente-python:
+    build:
+      context: .
+      dockerfile: Dockerfile-python
+    volumes:
+      - ./codigo-python/cliente.py:/app/main.py # passar caminho real dos arquivos main
+    depends_on:
+      - servidor-python
 
-# # -------- RUBY -----------
-#   servidor-ruby:
-#      build:
-#        context: .
-#        dockerfile: Dockerfile-ruby
-#      volumes:
-#        - ./codigo-ruby/servidor.rb:/app/main.rb
-#      depends_on:
-#        - broker
-#        - proxy
+# -------- RUBY -----------
+  servidor-ruby:
+     build:
+       context: .
+       dockerfile: Dockerfile-ruby
+     volumes:
+       - ./codigo-ruby/servidor.rb:/app/main.rb
+     depends_on:
+       - broker
+       - proxy
 
-#   cliente-ruby:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile-ruby
-#     image: cliente_ruby:gemzmq
-#     volumes:
-#       - ./codigo-ruby/cliente.rb:/app/main.rb
-#     depends_on:
-#       - servidor-ruby
+  cliente-ruby:
+    build:
+      context: .
+      dockerfile: Dockerfile-ruby
+    image: cliente_ruby:gemzmq
+    volumes:
+      - ./codigo-ruby/cliente.rb:/app/main.rb
+    depends_on:
+      - servidor-ruby
 
 # # -------------- C# -------------
-#   servidor-csharp:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile-csharp
-#       args:
-#         FOLDER_NAME: Servidor
-#     depends_on:
-#       - broker
+  servidor-csharp:
+    build:
+      context: .
+      dockerfile: Dockerfile-csharp
+      args:
+        FOLDER_NAME: Servidor
+    depends_on:
+      - broker
 
-#   cliente-csharp:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile-csharp
-#       args:
-#         FOLDER_NAME: Cliente
-#     depends_on:
-#       - servidor-csharp
+  cliente-csharp:
+    build:
+      context: .
+      dockerfile: Dockerfile-csharp
+      args:
+        FOLDER_NAME: Cliente
+    depends_on:
+      - servidor-csharp
 
