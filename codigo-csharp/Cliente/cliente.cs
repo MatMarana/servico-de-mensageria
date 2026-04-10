@@ -8,8 +8,8 @@ class Program
     static void Main(string[] args)
     {
         string receivedChannels =  "", step = "login";
-        string[] names = ClientHelpers.ReadFile("names.txt");
-        string[] channels = ClientHelpers.ReadFile("channels.txt");
+        string[] names = ["Henrique", "Tiago", "Mateus", "Leo", "Pedro", "Givas", "Kawan", "Albertini", "Robertinho", "Ale"];
+        string[] channels = ["Kiss","Nightwish","RedHot","Black Sabbath","Pedra Leticia","Raimundos","CBR Jr", "EOF"];
         string[] subscribedChannels = new string[3];
 
         int namesIndex = 0, channelsIndex = 0, incremento = 0;
