@@ -71,8 +71,7 @@ loop do
         socket.send_string(reply_bin)
       end
       publisher.send_string(canal, ZMQ::SNDMORE)
-      mensagem_bin = (mensagem).to_msgpack
-      publisher.send_string(mensagem_bin)
+      publisher.send_string(mensagem)
   end
   sleep(1)
   puts "#{reply}"

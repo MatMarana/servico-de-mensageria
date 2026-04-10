@@ -100,9 +100,8 @@ loop do
   topico = ''
   subscriber.recv_string(topico)
 
-  mensagem_publicada_bin = ''
-  subscriber.recv_string(mensagem_publicada_bin)
-  mensagem_publicada = MessagePack.unpack(mensagem_publicada_bin)
+  mensagem_publicada = ''
+  subscriber.recv_string(mensagem_publicada)
 
   contador = contador + 1
 end
