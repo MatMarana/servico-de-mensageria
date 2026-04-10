@@ -75,7 +75,7 @@ class Program
         if (subSocket.TryReceiveFrameString(out string topicoRecebido))
         {
             string conteudoRecebido = subSocket.ReceiveFrameString();
-            Console.WriteLine($"Canal {topicoRecebido} | Msg {conteudoRecebido}");
+            Console.WriteLine($"RECENDO: {topicoRecebido} | Msg {conteudoRecebido}");
         }
 
         return message;

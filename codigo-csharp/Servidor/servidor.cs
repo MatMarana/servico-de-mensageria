@@ -65,9 +65,9 @@ class Program
 
         pubSocket.SendMoreFrame(canal).SendFrame(mensagemCorpo);
 
-        Console.WriteLine($"Canal: {canal} | Msg: {mensagemCorpo}");
+        Console.WriteLine($"PUBLICANDO: {canal} | Msg: {mensagemCorpo}");
 
-        return "mensagem_publicada";
+        return "ok";
     }
 
     static string ChannelsList(HashSet<string> loadedChannels)
