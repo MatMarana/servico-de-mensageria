@@ -30,10 +30,6 @@ def adiciona_canal(canais:list, canal: str):
     return saida
 
 
-
-    return ",".join(canais)
-
-
 while True:
     mensagem_bin = socket.recv()
     mensagem = msgpack.unpackb(mensagem_bin, raw=False)
@@ -55,8 +51,9 @@ while True:
             resposta = "erro"
     elif operacao == "listar":
         resposta = saida_operacao
-    
-    
+    elif operacao == "canal":
+            lista_conteudo= conteudo.split("-")
+            resposta = lista_conteudo[1] 
     else:
         resposta = "erro inesperado"
 
