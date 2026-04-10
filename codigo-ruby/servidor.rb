@@ -36,7 +36,7 @@ loop do
         socket.send_string(reply_bin)
       end
     when "canais"
-      if lista_canais.include?(informacao)
+      if informacao == "EOF"
         reply = "erro"
         reply_bin = (reply).to_msgpack
         socket.send_string(reply_bin)
@@ -50,21 +50,39 @@ loop do
       reply = ""
       contador = 0
       lista_canais.each  do |canal|
-        reply += "#{contador}: #{canal} \n"
+        reply += "canal #{contador}: #{canal} \n"
         contador += 1
       end
       reply_bin = (reply).to_msgpack
       socket.send_string(reply_bin)
+      sleep(1)
+      puts "#{reply}"
+    when "canal"
+      conteudo = informacao.split("-")
+      canal = conteudo[0]
+      mensagem = conteudo[1]
+      if conteudo
+        reply = "ok"
+        reply_bin = (reply).to_msgpack
+        socket.send_string(reply_bin)
+      else
+        reply = "erro"
+        reply_bin = (reply).to_msgpack
+        socket.send_string(reply_bin)
+      end
+      publisher.send_string(canal, ZMQ::SNDMORE)
+      publisher.send_string(mensagem)
   end
   sleep(1)
   puts "#{reply}"
   
 end
 
-  loop do
-    mensagem_teste = "Mensagem publicada pelo servidor"
-    mensagem_teste_bin = (mensagem_teste).to_msgpack
-    publisher.send_string(mensagem_teste_bin)
-    sleep 1
-  end
+
+
+
+
+
+    
+
 
