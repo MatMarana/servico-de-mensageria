@@ -26,12 +26,12 @@ class Program
             switch (step)
             {
                 case "login":
-                    message = Login(names[namesIndex], client);
+                    message = Login(names[namesIndex % names.Length], client);
                     namesIndex++;
                     break;
 
                 case "canais":
-                    message = Channels(channels[channelsIndex], client);
+                    message = Channels(channels[channelsIndex % channels.Length], client);
                     channelsIndex++;
                     break;
 
@@ -75,7 +75,7 @@ class Program
         if (subSocket.TryReceiveFrameString(out string topicoRecebido))
         {
             string conteudoRecebido = subSocket.ReceiveFrameString();
-            Console.WriteLine($"RECENDO: {topicoRecebido} | Msg {conteudoRecebido}");
+            Console.WriteLine($"RECENDO: {topicoRecebido} | MSG: {conteudoRecebido}");
         }
 
         return message;
@@ -83,16 +83,17 @@ class Program
 
     static string[] Subscribing(SubscriberSocket subSocket, string receivedChannels)
     {
-        string[] subscribedChannels = new string[3];
-        string[] channelsList = receivedChannels.Split(",");
+        string[] channelsList = receivedChannels.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-        subscribedChannels[0] = channelsList[0];
-        subscribedChannels[1] = channelsList[1];
-        subscribedChannels[2] = channelsList[2];
+        int quantidadeParaAssinar = Math.Min(channelsList.Length, 3);
 
-        subSocket.Subscribe(subscribedChannels[0]);
-        subSocket.Subscribe(subscribedChannels[1]);
-        subSocket.Subscribe(subscribedChannels[2]);
+        string[] subscribedChannels = new string[quantidadeParaAssinar];
+
+        for (int i = 0; i < quantidadeParaAssinar; i++)
+        {
+            subSocket.Subscribe(channelsList[i]);
+            subscribedChannels[i] = channelsList[i];
+        }
 
         return subscribedChannels;
     }

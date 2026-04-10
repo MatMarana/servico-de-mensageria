@@ -14,11 +14,11 @@ publisher = context.socket(ZMQ::PUB)
 socket.connect("tcp://broker:5556")
 publisher.connect("tcp://proxy:5558")
 
-loop do 
+loop do
   string = ""
   socket.recv_string(string)
   mensagem = MessagePack.unpack(string)
-  
+
   partes = mensagem.split("|")
   operacao = partes[0]
   informacao = partes[1]
@@ -71,18 +71,11 @@ loop do
         socket.send_string(reply_bin)
       end
       publisher.send_string(canal, ZMQ::SNDMORE)
+      sleep(1)
       publisher.send_string(mensagem)
+      puts "PUBLICANDO: #{canal} | MSG: #{mensagem}"
   end
   sleep(1)
   puts "#{reply}"
-  
+  sleep(1)
 end
-
-
-
-
-
-
-    
-
-

@@ -21,16 +21,17 @@ loop do
   nome = nomes_login.sample
   string = ""
   time = Time.now.strftime("%H:%M:%S")
-  
+
   mensagem_formatada = "login|#{nome}|#{time}"
   puts "#{mensagem_formatada}"
   time = Time.now.strftime("%H:%M:%S")
   mensagem = (mensagem_formatada).to_msgpack
   socket.send_string(mensagem)
-  
+  sleep(1)
+
   socket.recv_string(string)
   resposta = MessagePack.unpack(string)
-  
+
   if resposta == "login"
     break
   end
@@ -48,6 +49,7 @@ nomes_canais.each do |canal|
 
   mensagem = (mensagem_formatada).to_msgpack
   socket.send_string(mensagem)
+  sleep(1)
 
   socket.recv_string(string)
   resposta = MessagePack.unpack(string)
@@ -58,7 +60,7 @@ nomes_canais.each do |canal|
 
   sleep(1)
 end
- 
+
 string = ""
 time = Time.now.strftime("%H:%M:%S")
 
@@ -68,7 +70,8 @@ puts "#{mensagem_formatada}"
 
 mensagem = (mensagem_formatada).to_msgpack
 socket.send_string(mensagem)
-  
+sleep(1)
+
 socket.recv_string(string)
 resposta = MessagePack.unpack(string)
 
@@ -76,7 +79,7 @@ canais_cadastrados = resposta.scan(/:\s*(.+)/).flatten.map(&:strip)
 
 sleep(1)
 
-3.times do 
+3.times do
   canal = canais_cadastrados.sample
   canais_inscritos << canal
   subscriber.setsockopt(ZMQ::SUBSCRIBE, canal)
@@ -87,10 +90,11 @@ contador = 0
 loop do
   canal = canais_inscritos.sample
   time = Time.now.strftime("%H:%M:%S")
-  
+
   mensagem_cliente = "canal|#{canal}-Mensagem Numero #{contador}|#{time}"
   mensagem_cliente_bin = (mensagem_cliente).to_msgpack
   socket.send_string(mensagem_cliente_bin)
+  sleep(1)
 
   puts "#{mensagem_cliente}"
 
@@ -99,9 +103,12 @@ loop do
 
   topico = ''
   subscriber.recv_string(topico)
+  sleep(1)
 
   mensagem_publicada = ''
   subscriber.recv_string(mensagem_publicada)
-
+  puts "RECEBENDO: #{topico} | MSG: #{mensagem_publicada}"
   contador = contador + 1
+  sleep(1)
+
 end

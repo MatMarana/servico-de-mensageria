@@ -64,8 +64,8 @@ class Program
         string mensagemCorpo = parts[1].Trim();
 
         pubSocket.SendMoreFrame(canal).SendFrame(mensagemCorpo);
-
-        Console.WriteLine($"PUBLICANDO: {canal} | Msg: {mensagemCorpo}");
+        Console.WriteLine($"PUBLICANDO: {canal} | MSG: {mensagemCorpo}");
+        Thread.Sleep(1000);
 
         return "ok";
     }
