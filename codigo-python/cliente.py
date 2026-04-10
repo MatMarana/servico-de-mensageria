@@ -78,9 +78,10 @@ if canal_bool and listar:
         resposta_bin = socket.recv()
         resposta = msgpack.unpackb(resposta_bin, raw=False)
         listar = False
-teste = resposta
+
+
 if not listar and not subscriber:
-    print("oi", teste)
+    
     # resposta_bin = socket.recv()
     # resposta = msgpack.unpackb(resposta_bin, raw=False)
 
