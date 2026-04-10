@@ -24,25 +24,25 @@ services:
       - 5557:5557
       - 5558:5558
 
-# -------------- PYTHON ---------
-  servidor-python:
-    build:
-      context: .
-      dockerfile: Dockerfile-python
-    volumes:
-      - ./codigo-python/servidor.py:/app/main.py # passar caminho real dos arquivos main
-    depends_on:
-      - broker
-      - proxy
+# # -------------- PYTHON ---------
+#   servidor-python:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile-python
+#     volumes:
+#       - ./codigo-python/servidor.py:/app/main.py # passar caminho real dos arquivos main
+#     depends_on:
+#       - broker
+#       - proxy
 
-  cliente-python:
-    build:
-      context: .
-      dockerfile: Dockerfile-python
-    volumes:
-      - ./codigo-python/cliente.py:/app/main.py # passar caminho real dos arquivos main
-    depends_on:
-      - servidor-python
+#   cliente-python:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile-python
+#     volumes:
+#       - ./codigo-python/cliente.py:/app/main.py # passar caminho real dos arquivos main
+#     depends_on:
+#       - servidor-python
 
 # # -------- RUBY -----------
 #   servidor-ruby:

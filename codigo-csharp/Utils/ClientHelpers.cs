@@ -5,6 +5,15 @@ using System.Collections.Generic;
 namespace Utils;
 public class ClientHelpers
 {
+    public static string FormatChannelsList(string channels)
+    {
+        string channelsList = string.Join(",", channels
+            .Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(linha => linha.Split(':').Last().Trim()));
+
+        Console.WriteLine(channelsList);
+        return channelsList;
+    }
     public static string FormatShipping(string operation, string content)
     {
         string time = DateTime.Now.ToString("HH:mm:ss");
