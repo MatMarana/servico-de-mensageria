@@ -107,9 +107,9 @@ if not listar and subscriber:
     sub.subscribe(canais_aleatorios[0])
     sub.subscribe(canais_aleatorios[1])
     sub.subscribe(canais_aleatorios[2])
-    indice = random.randint(0, 2)
     i = 0
     while(subscriber):
+        indice = random.randint(0, 2)
         i +=1
         mensagem = f"canal|{canais_aleatorios[indice]}-teste{i}|{datetime.now()}"
         mensagem = mensagem.strip().lower()
