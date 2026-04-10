@@ -7,43 +7,86 @@ class Program
 {
     static void Main(string[] args)
     {
+        string receivedChannels =  "", step = "login";
         string[] names = ClientHelpers.ReadFile("names.txt");
         string[] channels = ClientHelpers.ReadFile("channels.txt");
+        string[] subscribedChannels = new string[3];
 
-        string step = "login";
+        int namesIndex = 0, channelsIndex = 0, incremento = 0;
+        
+        using var subSocket = new SubscriberSocket();
+        using var client = new RequestSocket();
 
-        using (var client = new RequestSocket())
+        client.Connect("tcp://broker:5555");
+        subSocket.Connect("tcp://proxy:5555");
+
+        while (true)
         {
-            client.Connect("tcp://broker:5555");
-            int i = 0;
-
-            while (true)
+            string message;
+            switch (step)
             {
-                string message;
-                switch (step)
-                {
-                    case "login":
-                        message = Login(names[i], client);
-                        break;
+                case "login":
+                    message = Login(names[namesIndex], client);
+                    namesIndex++;
+                    break;
 
-                    case "canais":
-                        message = Channels(channels, client);
-                        break;
+                case "canais":
+                    message = Channels(channels[channelsIndex], client);
+                    channelsIndex++;
+                    break;
 
-                    case "listar":
-                        message = ListChannels(client);
-                        break;
+                case "listar":
+                    receivedChannels = ListChannels(client);
+                    message = receivedChannels;
+                    break;
 
-                    default:
-                        message = "...";
-                        break;
-                }
+                case "subscribing":
+                    subscribedChannels = Subscribing(subSocket, receivedChannels);
+                    message = "...";
+                    break;
 
-                step = GetStep(message, step);
-                Thread.Sleep(1000);
-                i++;
+                case "message request":
+                    message = MessageRequest(client, subscribedChannels, incremento);
+                    incremento++;
+                    break;
+
+                default:
+                    message = "...";
+                    break;
             }
+
+            step = GetStep(message, step);
+            Thread.Sleep(1000);
         }
+    }
+
+    static string MessageRequest(RequestSocket client, string[] subscribedChannels, int incremento)
+    {
+        string shipping, message;
+        Random random = new Random();
+
+        int randomIndex = random.Next(0, 3);
+        string mensagem = subscribedChannels[randomIndex] + "-" + "Rock N Roll " + incremento.ToString();
+        shipping = ClientHelpers.FormatShipping("canal", mensagem);
+        message = ClientHelpers.SendToServer(shipping, client);
+
+        return message;
+    }
+    
+    static string[] Subscribing(SubscriberSocket subSocket, string receivedChannels)
+    {
+        string[] subscribedChannels = new string[3];
+        string[] channelsList = receivedChannels.Split(",");
+
+        subscribedChannels[0] = channelsList[0];
+        subscribedChannels[1] = channelsList[1];
+        subscribedChannels[2] = channelsList[2];
+
+        subSocket.Subscribe(subscribedChannels[0]);
+        subSocket.Subscribe(subscribedChannels[1]);
+        subSocket.Subscribe(subscribedChannels[2]);
+
+        return subscribedChannels;
     }
 
     static string ListChannels(RequestSocket client)
@@ -53,15 +96,13 @@ class Program
         shipping = ClientHelpers.FormatShipping("listar", "");
         message = ClientHelpers.SendToServer(shipping, client);
 
-        return message;
+        return ClientHelpers.FormatChannelsList(message);
     }
 
-    static string Channels(string[] channels, RequestSocket client)
+    static string Channels(string channel, RequestSocket client)
     {
-        string channel, shipping, message;
-        int index = Random.Shared.Next(0, channels.Length);
+        string shipping, message;
 
-        channel = channels[index];
         shipping = ClientHelpers.FormatShipping("canais", channel);
         message = ClientHelpers.SendToServer(shipping, client);
 
@@ -89,6 +130,17 @@ class Program
         {
             return "listar";
         }
+
+        if (step == "listar")
+        {
+            return "subscribing";
+        }
+
+        if (step == "subscribing")
+        {
+            return "message request";
+        }
+
         return step;
     }
 }

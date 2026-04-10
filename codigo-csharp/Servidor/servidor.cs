@@ -67,7 +67,8 @@ class Program
             channelsList += line;
             i++;
         }
-        if (loadedChannels.Count() == 0){
+        if (loadedChannels.Count() == 0)
+        {
             channelsList += "Sem canais";
         }
         return channelsList;
@@ -75,12 +76,12 @@ class Program
 
     static string ChannelsValidation(string channel, HashSet<string> loadedChannels)
     {
-        bool existentChannel = loadedChannels.Add(channel);
-
-        if (existentChannel)
+        if (channel != "eof")
         {
+            loadedChannels.Add(channel);
             return "sucesso";
         }
+
         return "erro";
     }
 
