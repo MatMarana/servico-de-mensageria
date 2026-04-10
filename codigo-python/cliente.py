@@ -54,7 +54,7 @@ canais = carregar_canais()
 logado = False
 canal_bool = False
 listar = True
-subscriber = False  
+subscriber = True  
 
 
 if not logado:
@@ -100,7 +100,7 @@ if canal_bool and listar:
         listar = False
 
 
-if not listar and not subscriber:
+if not listar and subscriber:
     canais_extraidos = extrair_canais(resposta)
     lista_canais = canais_extraidos.split(",")
     canais_aleatorios = random.sample(lista_canais,3)
@@ -108,15 +108,17 @@ if not listar and not subscriber:
     sub.subscribe(canais_aleatorios[1])
     sub.subscribe(canais_aleatorios[2])
     indice = random.randint(0, 2)
-
-    mensagem = f"canal|{canais_aleatorios[indice]}-teste|{datetime.now()}"
-    mensagem = mensagem.strip().lower()
-    print(f"{mensagem}", flush=True)
-    time.sleep(1)
-    socket.send(msgpack.packb(mensagem))
-    resposta_bin = socket.recv()
-    resposta = msgpack.unpackb(resposta_bin, raw=False)
-    print(resposta)
+    i = 0
+    while(subscriber):
+        i +=1
+        mensagem = f"canal|{canais_aleatorios[indice]}-teste{i}|{datetime.now()}"
+        mensagem = mensagem.strip().lower()
+        print(f"{mensagem}", flush=True)
+        time.sleep(1)
+        socket.send(msgpack.packb(mensagem))
+        resposta_bin = socket.recv()
+        resposta = msgpack.unpackb(resposta_bin, raw=False)
+        print(resposta)
     
 
 
