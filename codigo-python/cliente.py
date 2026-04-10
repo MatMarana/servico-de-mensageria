@@ -34,6 +34,8 @@ canais = carregar_canais()
 logado = False
 canal_bool = False
 listar = True
+subscriber = False  
+
 
 if not logado:
     for usuario in nomes:
@@ -74,6 +76,18 @@ if canal_bool and listar:
         time.sleep(1)
         socket.send(msgpack.packb(mensagem))
         resposta_bin = socket.recv()
+        resposta = msgpack.unpackb(resposta_bin, raw=False)
+        listar = False
+teste = resposta
+if not listar and not subscriber:
+    print("oi", teste)
+    # resposta_bin = socket.recv()
+    # resposta = msgpack.unpackb(resposta_bin, raw=False)
+
+
+
+
+
 
     
 

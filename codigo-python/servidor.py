@@ -51,6 +51,8 @@ while True:
             resposta = "erro"
     elif operacao == "listar":
         resposta = saida_operacao
+    
+    
     else:
         resposta = "erro inesperado"
 
