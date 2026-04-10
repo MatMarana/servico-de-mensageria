@@ -8,17 +8,17 @@ class Program
     static void Main(string[] args)
     {
         string receivedChannels =  "", step = "login";
-        string[] names = ClientHelpers.ReadFile("names.txt");
-        string[] channels = ClientHelpers.ReadFile("channels.txt");
+        string[] names = ["Henrique", "Tiago", "Mateus", "Leo", "Pedro", "Givas", "Kawan", "Albertini", "Robertinho", "Ale"];
+        string[] channels = ["Kiss","Nightwish","RedHot","Black Sabbath","Pedra Leticia","Raimundos","CBR Jr", "EOF"];
         string[] subscribedChannels = new string[3];
 
         int namesIndex = 0, channelsIndex = 0, incremento = 0;
-        
+
         using var subSocket = new SubscriberSocket();
         using var client = new RequestSocket();
 
         client.Connect("tcp://broker:5555");
-        subSocket.Connect("tcp://proxy:5555");
+        subSocket.Connect("tcp://proxy:5557");
 
         while (true)
         {
@@ -26,12 +26,12 @@ class Program
             switch (step)
             {
                 case "login":
-                    message = Login(names[namesIndex], client);
+                    message = Login(names[namesIndex % names.Length], client);
                     namesIndex++;
                     break;
 
                 case "canais":
-                    message = Channels(channels[channelsIndex], client);
+                    message = Channels(channels[channelsIndex % channels.Length], client);
                     channelsIndex++;
                     break;
 
@@ -46,7 +46,7 @@ class Program
                     break;
 
                 case "message request":
-                    message = MessageRequest(client, subscribedChannels, incremento);
+                    message = MessageRequest(client, subscribedChannels, incremento, subSocket);
                     incremento++;
                     break;
 
@@ -60,7 +60,7 @@ class Program
         }
     }
 
-    static string MessageRequest(RequestSocket client, string[] subscribedChannels, int incremento)
+    static string MessageRequest(RequestSocket client, string[] subscribedChannels, int incremento, SubscriberSocket subSocket)
     {
         string shipping, message;
         Random random = new Random();
@@ -70,21 +70,30 @@ class Program
         shipping = ClientHelpers.FormatShipping("canal", mensagem);
         message = ClientHelpers.SendToServer(shipping, client);
 
+        Thread.Sleep(100);
+
+        if (subSocket.TryReceiveFrameString(out string topicoRecebido))
+        {
+            string conteudoRecebido = subSocket.ReceiveFrameString();
+            Console.WriteLine($"RECENDO: {topicoRecebido} | MSG: {conteudoRecebido}");
+        }
+
         return message;
     }
-    
+
     static string[] Subscribing(SubscriberSocket subSocket, string receivedChannels)
     {
-        string[] subscribedChannels = new string[3];
-        string[] channelsList = receivedChannels.Split(",");
+        string[] channelsList = receivedChannels.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-        subscribedChannels[0] = channelsList[0];
-        subscribedChannels[1] = channelsList[1];
-        subscribedChannels[2] = channelsList[2];
+        int quantidadeParaAssinar = Math.Min(channelsList.Length, 3);
 
-        subSocket.Subscribe(subscribedChannels[0]);
-        subSocket.Subscribe(subscribedChannels[1]);
-        subSocket.Subscribe(subscribedChannels[2]);
+        string[] subscribedChannels = new string[quantidadeParaAssinar];
+
+        for (int i = 0; i < quantidadeParaAssinar; i++)
+        {
+            subSocket.Subscribe(channelsList[i]);
+            subscribedChannels[i] = channelsList[i];
+        }
 
         return subscribedChannels;
     }

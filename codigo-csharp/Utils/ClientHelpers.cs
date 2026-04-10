@@ -11,7 +11,6 @@ public class ClientHelpers
             .Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)
             .Select(linha => linha.Split(':').Last().Trim()));
 
-        Console.WriteLine(channelsList);
         return channelsList;
     }
     public static string FormatShipping(string operation, string content)
