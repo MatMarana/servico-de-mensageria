@@ -42,43 +42,54 @@ services:
     depends_on:
       - servidor-python
 
-# -------- RUBY -----------
-  servidor-ruby:
-     build:
-       context: .
-       dockerfile: Dockerfile-ruby
-     volumes:
-       - ./codigo-ruby/servidor.rb:/app/main.rb
-     depends_on:
-       - broker
-       - proxy
+# # -------- RUBY -----------
+#   servidor-ruby:
+#      build:
+#        context: .
+#        dockerfile: Dockerfile-ruby
+#      volumes:
+#        - ./codigo-ruby/servidor.rb:/app/main.rb
+#      depends_on:
+#        - broker
+#        - proxy
 
-  cliente-ruby:
+#   cliente-ruby:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile-ruby
+#     image: cliente_ruby:gemzmq
+#     volumes:
+#       - ./codigo-ruby/cliente.rb:/app/main.rb
+#     depends_on:
+#       - servidor-ruby
+
+# # # -------------- C# -------------
+#   servidor-csharp:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile-csharp
+#       args:
+#         FOLDER_NAME: Servidor
+#     depends_on:
+#       - broker
+
+#   cliente-csharp:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile-csharp
+#       args:
+#         FOLDER_NAME: Cliente
+#     depends_on:
+#       - servidor-csharp
+
+# -------------- REFERENCIA ---------
+  referencia:
     build:
       context: .
-      dockerfile: Dockerfile-ruby
-    image: cliente_ruby:gemzmq
+      dockerfile: Dockerfile-python
+    container_name: referencia
     volumes:
-      - ./codigo-ruby/cliente.rb:/app/main.rb
-    depends_on:
-      - servidor-ruby
-
-# # -------------- C# -------------
-  servidor-csharp:
-    build:
-      context: .
-      dockerfile: Dockerfile-csharp
-      args:
-        FOLDER_NAME: Servidor
-    depends_on:
-      - broker
-
-  cliente-csharp:
-    build:
-      context: .
-      dockerfile: Dockerfile-csharp
-      args:
-        FOLDER_NAME: Cliente
-    depends_on:
-      - servidor-csharp
+      - ./referencia/referencia.py:/app/main.py
+    ports:
+      - 5560:5560
 
