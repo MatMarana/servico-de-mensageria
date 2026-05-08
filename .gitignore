@@ -2,3 +2,4 @@
 env
 .vscode
 *.sln
+docker-compose.yml

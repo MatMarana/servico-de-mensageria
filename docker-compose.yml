@@ -42,7 +42,7 @@ services:
     depends_on:
       - servidor-python
 
-# -------- RUBY -----------
+# # -------- RUBY -----------
   servidor-ruby:
      build:
        context: .
@@ -63,8 +63,8 @@ services:
     depends_on:
       - servidor-ruby
 
-# # -------------- C# -------------
-   servidor-csharp:
+# # # -------------- C# -------------
+  servidor-csharp:
     build:
       context: .
       dockerfile: Dockerfile-csharp
@@ -81,4 +81,15 @@ services:
         FOLDER_NAME: Cliente
     depends_on:
       - servidor-csharp
+
+# -------------- REFERENCIA ---------
+  referencia:
+    build:
+      context: .
+      dockerfile: Dockerfile-python
+    container_name: referencia
+    volumes:
+      - ./referencia/referencia.py:/app/main.py
+    ports:
+      - 5560:5560
 
