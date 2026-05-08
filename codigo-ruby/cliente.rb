@@ -8,6 +8,8 @@ nomes_login = ["Ale", "Gabriel", "Giovanni", "Henrique", "Kawan", "Leo", "Mateus
 nomes_canais = ["IA", "TCC", "ESTRUTURA DE DADOS", "COMPLEXIDADE DE ALGORITMOS", "ARQUITETURA DE COMPUTADORES", "EOF"]
 canais_cadastrados = []
 canais_inscritos = []
+relogio_cliente = 0
+contador = 0
 
 context = ZMQ::Context.new
 
@@ -21,18 +23,28 @@ loop do
   nome = nomes_login.sample
   string = ""
   time = Time.now.strftime("%H:%M:%S")
+  relogio_cliente += 1
 
-  mensagem_formatada = "login|#{nome}|#{time}"
+  mensagem_formatada = "login|#{nome}|#{time}|#{relogio_cliente}"
   puts "#{mensagem_formatada}"
-  time = Time.now.strftime("%H:%M:%S")
+
   mensagem = (mensagem_formatada).to_msgpack
   socket.send_string(mensagem)
+  
   sleep(1)
 
   socket.recv_string(string)
   resposta = MessagePack.unpack(string)
 
-  if resposta == "login"
+  partes = resposta.split("|")
+  resultado = partes[0]
+  relogio_servidor = partes[1]
+
+  if relogio_servidor.to_i > relogio_cliente
+    relogio_cliente = relogio_servidor.to_i
+  end
+
+  if resultado == "login"
     break
   end
 
@@ -43,18 +55,28 @@ end
 nomes_canais.each do |canal|
   string = ""
   time = Time.now.strftime("%H:%M:%S")
+  relogio_cliente += 1
 
-  mensagem_formatada = "canais|#{canal}|#{time}"
+  mensagem_formatada = "canais|#{canal}|#{time}|#{relogio_cliente}"
   puts "#{mensagem_formatada}"
 
   mensagem = (mensagem_formatada).to_msgpack
   socket.send_string(mensagem)
+
   sleep(1)
 
   socket.recv_string(string)
   resposta = MessagePack.unpack(string)
 
-  if resposta == "erro"
+  partes = resposta.split("|")
+  resultado = partes[0]
+  relogio_servidor = partes[1]
+
+  if relogio_servidor.to_i > relogio_cliente
+    relogio_cliente = relogio_servidor.to_i
+  end
+
+  if resultado  == "erro"
     break
   end
 
@@ -63,13 +85,14 @@ end
 
 string = ""
 time = Time.now.strftime("%H:%M:%S")
+relogio_cliente += 1
 
-mensagem_formatada = "listar||#{time}"
-
+mensagem_formatada = "listar||#{time}|#{relogio_cliente}"
 puts "#{mensagem_formatada}"
 
 mensagem = (mensagem_formatada).to_msgpack
 socket.send_string(mensagem)
+
 sleep(1)
 
 socket.recv_string(string)
@@ -85,13 +108,13 @@ sleep(1)
   subscriber.setsockopt(ZMQ::SUBSCRIBE, canal)
 end
 
-contador = 0
-
 loop do
   canal = canais_inscritos.sample
   time = Time.now.strftime("%H:%M:%S")
+  relogio_cliente += 1
 
-  mensagem_cliente = "canal|#{canal}-Mensagem Numero #{contador}|#{time}"
+  mensagem_cliente = "canal|#{canal}-Mensagem Numero #{contador}|#{time}|#{relogio_cliente}"
+
   mensagem_cliente_bin = (mensagem_cliente).to_msgpack
   socket.send_string(mensagem_cliente_bin)
   sleep(1)
@@ -99,7 +122,16 @@ loop do
   puts "#{mensagem_cliente}"
 
   resposta = ''
+
   socket.recv_string(resposta)
+
+  partes = resposta.split("|")
+  resultado = partes[0]
+  relogio_servidor = partes[1]
+
+  if relogio_servidor.to_i > relogio_cliente
+    relogio_cliente = relogio_servidor.to_i
+  end
 
   topico = ''
   subscriber.recv_string(topico)

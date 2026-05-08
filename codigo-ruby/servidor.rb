@@ -6,6 +6,7 @@ require "time"
 
 lista_nomes = ["Ale", "Gabriel", "Giovanni", "Kawan", "Pedro", "Roberto", "Leo", "Henrique"]
 lista_canais = []
+relogio_servidor = 0
 
 context = ZMQ::Context.new
 socket = context.socket(ZMQ::REP)
@@ -23,25 +24,32 @@ loop do
   operacao = partes[0]
   informacao = partes[1]
   tempo = partes[2]
+  relogio_cliente = partes[3]
+
+  if relogio_cliente.to_i > relogio_servidor
+    relogio_servidor = relogio_cliente.to_i
+  end  
+
+  relogio_servidor += 1
 
   case operacao
     when "login"
       if lista_nomes.include?(informacao)
-        reply = "erro"
+        reply = "erro|#{relogio_servidor}"
         reply_bin = (reply).to_msgpack
         socket.send_string(reply_bin)
       else
-        reply = "login"
+        reply = "login|#{relogio_servidor}"
         reply_bin = (reply).to_msgpack
         socket.send_string(reply_bin)
       end
     when "canais"
       if informacao == "EOF"
-        reply = "erro"
+        reply = "erro|#{relogio_servidor}"
         reply_bin = (reply).to_msgpack
         socket.send_string(reply_bin)
       else
-        reply = "sucesso"
+        reply = "sucesso|#{relogio_servidor}"
         reply_bin = (reply).to_msgpack
         socket.send_string(reply_bin)
         lista_canais << informacao
@@ -62,11 +70,11 @@ loop do
       canal = conteudo[0]
       mensagem = conteudo[1]
       if conteudo
-        reply = "ok"
+        reply = "ok|#{relogio_servidor}"
         reply_bin = (reply).to_msgpack
         socket.send_string(reply_bin)
       else
-        reply = "erro"
+        reply = "erro|#{relogio_servidor}"
         reply_bin = (reply).to_msgpack
         socket.send_string(reply_bin)
       end
