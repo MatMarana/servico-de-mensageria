@@ -7,13 +7,16 @@ require "time"
 lista_nomes = ["Ale", "Gabriel", "Giovanni", "Kawan", "Pedro", "Roberto", "Leo", "Henrique"]
 lista_canais = []
 relogio_servidor = 0
+contador_mensagens = 0
 
 context = ZMQ::Context.new
 socket = context.socket(ZMQ::REP)
 publisher = context.socket(ZMQ::PUB)
+reference = context.socket(ZMQ::REQ)
 
 socket.connect("tcp://broker:5556")
 publisher.connect("tcp://proxy:5558")
+reference.connect("tcp://refrencia:5560")
 
 loop do
   string = ""
@@ -82,6 +85,7 @@ loop do
       sleep(1)
       publisher.send_string(mensagem)
       puts "PUBLICANDO: #{canal} | MSG: #{mensagem}"
+
   end
   sleep(1)
   puts "#{reply}"
