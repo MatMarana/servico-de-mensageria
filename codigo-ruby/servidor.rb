@@ -5,11 +5,14 @@ require "msgpack"
 require "time"
 
 lista_nomes = ["Ale", "Gabriel", "Giovanni", "Kawan", "Pedro", "Roberto", "Leo", "Henrique"]
+
 lista_canais = []
+
 relogio_servidor = 0
 contador_mensagens = 0
 
 context = ZMQ::Context.new
+
 socket = context.socket(ZMQ::REP)
 publisher = context.socket(ZMQ::PUB)
 reference = context.socket(ZMQ::REQ)
@@ -85,6 +88,16 @@ loop do
       sleep(1)
       publisher.send_string(mensagem)
       puts "PUBLICANDO: #{canal} | MSG: #{mensagem}"
+
+      contador_mensagens += 1
+
+#      if contador_mensagens >= 10
+#        resposta_ref = ""
+#       reference.send_string(({"operacao": "heartbeat", "conteudo": "servidor"}).to_msgpack)
+#        MessagePack.unpack(reference.recv_string(resposta_ref))
+#       puts "#{resposta_ref}"
+#        contador_mensagens = 0
+#      end
 
   end
   sleep(1)

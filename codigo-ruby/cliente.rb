@@ -6,33 +6,35 @@ require "time"
 
 nomes_login = ["Ale", "Gabriel", "Giovanni", "Henrique", "Kawan", "Leo", "Mateus", "Pedro", "Roberto", "Tiago"]
 nomes_canais = ["IA", "TCC", "ESTRUTURA DE DADOS", "COMPLEXIDADE DE ALGORITMOS", "ARQUITETURA DE COMPUTADORES", "EOF"]
+
 canais_cadastrados = []
 canais_inscritos = []
+
 relogio_cliente = 0
 contador = 0
 
 context = ZMQ::Context.new
 
 socket = context.socket(ZMQ::REQ)
-socket.connect("tcp://broker:5555")
-
 subscriber = context.socket(ZMQ::SUB)
+
+socket.connect("tcp://broker:5555")
 subscriber.connect("tcp://proxy:5557")
 
 loop do
-  nome = nomes_login.sample
-  string = ""
+  nome = nomes_login.sample #Pega um nome de forma aleatória
   time = Time.now.strftime("%H:%M:%S")
-  relogio_cliente += 1
 
-  mensagem_formatada = "login|#{nome}|#{time}|#{relogio_cliente}"
+  relogio_cliente += 1 #Incrementa o relógio lógico
+
+  mensagem_formatada = "login|#{nome}|#{time}|relogio: #{relogio_cliente}"
   puts "#{mensagem_formatada}"
 
-  mensagem = (mensagem_formatada).to_msgpack
-  socket.send_string(mensagem)
+  socket.send_string((mensagem_formatada).to_msgpack)
   
   sleep(1)
 
+  string = ""
   socket.recv_string(string)
   resposta = MessagePack.unpack(string)
 
@@ -53,11 +55,10 @@ loop do
 end
 
 nomes_canais.each do |canal|
-  string = ""
   time = Time.now.strftime("%H:%M:%S")
   relogio_cliente += 1
 
-  mensagem_formatada = "canais|#{canal}|#{time}|#{relogio_cliente}"
+  mensagem_formatada = "canais|#{canal}|#{time}|relogio: #{relogio_cliente}"
   puts "#{mensagem_formatada}"
 
   mensagem = (mensagem_formatada).to_msgpack
@@ -65,6 +66,7 @@ nomes_canais.each do |canal|
 
   sleep(1)
 
+  string = ""
   socket.recv_string(string)
   resposta = MessagePack.unpack(string)
 
@@ -83,11 +85,10 @@ nomes_canais.each do |canal|
   sleep(1)
 end
 
-string = ""
 time = Time.now.strftime("%H:%M:%S")
 relogio_cliente += 1
 
-mensagem_formatada = "listar||#{time}|#{relogio_cliente}"
+mensagem_formatada = "listar||#{time}|relogio: #{relogio_cliente}"
 puts "#{mensagem_formatada}"
 
 mensagem = (mensagem_formatada).to_msgpack
@@ -95,6 +96,7 @@ socket.send_string(mensagem)
 
 sleep(1)
 
+string = ""
 socket.recv_string(string)
 resposta = MessagePack.unpack(string)
 
@@ -113,7 +115,7 @@ loop do
   time = Time.now.strftime("%H:%M:%S")
   relogio_cliente += 1
 
-  mensagem_cliente = "canal|#{canal}-Mensagem Numero #{contador}|#{time}|#{relogio_cliente}"
+  mensagem_cliente = "canal|#{canal}-Mensagem Numero #{contador}|#{time}|relogio: #{relogio_cliente}"
 
   mensagem_cliente_bin = (mensagem_cliente).to_msgpack
   socket.send_string(mensagem_cliente_bin)
@@ -133,14 +135,17 @@ loop do
     relogio_cliente = relogio_servidor.to_i
   end
 
-  topico = ''
+  topico = ""
   subscriber.recv_string(topico)
+
   sleep(1)
 
-  mensagem_publicada = ''
+  mensagem_publicada = ""
   subscriber.recv_string(mensagem_publicada)
   puts "RECEBENDO: #{topico} | MSG: #{mensagem_publicada}"
-  contador = contador + 1
+
+  contador += 1
+
   sleep(1)
 
 end
