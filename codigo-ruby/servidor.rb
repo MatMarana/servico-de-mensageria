@@ -4,6 +4,18 @@ require "ffi-rzmq"
 require "msgpack"
 require "time"
 
+require_relative "utils"
+
+def monta_resposta_canais(lista_canais)
+  reply = ""
+  contador = 0
+  lista_canais.each  do |canal|
+    reply += "canal #{contador}: #{canal} \n"
+    contador += 1
+  end
+  return reply
+end
+
 lista_nomes = ["Ale", "Gabriel", "Giovanni", "Kawan", "Pedro", "Roberto", "Leo", "Henrique"]
 
 lista_canais = []
@@ -13,18 +25,13 @@ contador_mensagens = 0
 
 context = ZMQ::Context.new
 
-socket = context.socket(ZMQ::REP)
-publisher = context.socket(ZMQ::PUB)
-reference = context.socket(ZMQ::REQ)
+socket, publisher = Utils.create_context_ZMQ(context, true)
 
-socket.connect("tcp://broker:5556")
-publisher.connect("tcp://proxy:5558")
+reference = context.socket(ZMQ::REQ)
 reference.connect("tcp://refrencia:5560")
 
 loop do
-  string = ""
-  socket.recv_string(string)
-  mensagem = MessagePack.unpack(string)
+  mensagem = Utils.receive_message(socket)
 
   partes = mensagem.split("|")
   operacao = partes[0]
@@ -32,9 +39,7 @@ loop do
   tempo = partes[2]
   relogio_cliente = partes[3]
 
-  if relogio_cliente.to_i > relogio_servidor
-    relogio_servidor = relogio_cliente.to_i
-  end  
+  relogio_servidor = Utils.get_bigger_clock(relogio_cliente, relogio_servidor)
 
   relogio_servidor += 1
 
@@ -42,33 +47,23 @@ loop do
     when "login"
       if lista_nomes.include?(informacao)
         reply = "erro|#{relogio_servidor}"
-        reply_bin = (reply).to_msgpack
-        socket.send_string(reply_bin)
+        Utils.send_message(socket, reply)
       else
         reply = "login|#{relogio_servidor}"
-        reply_bin = (reply).to_msgpack
-        socket.send_string(reply_bin)
+        Utils.send_message(socket, reply)
       end
     when "canais"
       if informacao == "EOF"
         reply = "erro|#{relogio_servidor}"
-        reply_bin = (reply).to_msgpack
-        socket.send_string(reply_bin)
+        Utils.send_message(socket, reply)
       else
         reply = "sucesso|#{relogio_servidor}"
-        reply_bin = (reply).to_msgpack
-        socket.send_string(reply_bin)
+        Utils.send_message(socket, reply)
         lista_canais << informacao
       end
     when "listar"
-      reply = ""
-      contador = 0
-      lista_canais.each  do |canal|
-        reply += "canal #{contador}: #{canal} \n"
-        contador += 1
-      end
-      reply_bin = (reply).to_msgpack
-      socket.send_string(reply_bin)
+      reply = monta_resposta_canais(lista_canais)
+      Utils.send_message(socket, reply)
       sleep(1)
       puts "#{reply}"
     when "canal"
@@ -88,17 +83,6 @@ loop do
       sleep(1)
       publisher.send_string(mensagem)
       puts "PUBLICANDO: #{canal} | MSG: #{mensagem}"
-
-      contador_mensagens += 1
-
-#      if contador_mensagens >= 10
-#        resposta_ref = ""
-#       reference.send_string(({"operacao": "heartbeat", "conteudo": "servidor"}).to_msgpack)
-#        MessagePack.unpack(reference.recv_string(resposta_ref))
-#       puts "#{resposta_ref}"
-#        contador_mensagens = 0
-#      end
-
   end
   sleep(1)
   puts "#{reply}"
