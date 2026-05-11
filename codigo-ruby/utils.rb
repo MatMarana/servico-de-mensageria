@@ -5,11 +5,13 @@ module Utils
         if servidor
             socket = context.socket(ZMQ::REP)
             publisher = context.socket(ZMQ::PUB)
+            reference = context.socket(ZMQ::REQ)
 
             socket.connect("tcp://broker:5556")
             publisher.connect("tcp://proxy:5558")
-
-            return socket, publisher
+            reference.connect("tcp://refrencia:5559")
+            
+            return socket, publisher, reference
         end
 
         socket = context.socket(ZMQ::REQ)

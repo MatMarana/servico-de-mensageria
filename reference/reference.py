@@ -2,7 +2,7 @@ import zmq
 import msgpack
 from datetime import datetime
 
-# Lista de servidores e ranks
+nomes_servidores = ["servidor-python", "servidor-csharp", "servidor-ruby"]
 servidores = {}
 rank_counter = 1
 
@@ -19,10 +19,11 @@ def registrar_servidor(nome):
 
 # Função para retornar a lista de servidores
 def listar_servidores():
-    return [
-        {"nome": nome, "rank": dados["rank"]}
-        for nome, dados in servidores.items()
-    ]
+    resposta = ""
+    for nome, dados in servidores.items():
+        resposta += f"Nome: {nome}|Rank: {dados["rank"]}"
+    
+    return resposta
 
 # Função para atualizar o heartbeat de um servidor
 def atualizar_heartbeat(nome):
@@ -44,25 +45,23 @@ def remover_inativos():
 # Configuração do ZeroMQ
 context = zmq.Context()
 socket = context.socket(zmq.REP)
-socket.bind("tcp://*:5560")
+socket.bind("tcp://*:5559")
 
 print("Serviço de referência iniciado", flush=True)
 
 while True:
     mensagem_bin = socket.recv()
     mensagem = msgpack.unpackb(mensagem_bin, raw=False)
-    operacao = mensagem["operacao"]
-    conteudo = mensagem.get("conteudo", "")
 
-    if operacao == "registrar":
-        rank = registrar_servidor(conteudo)
-        resposta = {"rank": rank}
-    elif operacao == "listar":
+    if mensagem == "listar":
         resposta = listar_servidores()
-    elif operacao == "heartbeat":
-        resposta = {"status": atualizar_heartbeat(conteudo)}
-    else:
-        resposta = {"erro": "Operação desconhecida"}
+    elif mensagem not in servidores:
+        if mensagem in nomes_servidores:
+            rank = registrar_servidor(mensagem)
+            resposta = rank
+    elif mensagem in servidores:
+        resposta = atualizar_heartbeat(conteudo)    
+
 
     remover_inativos()
     socket.send(msgpack.packb(resposta))
