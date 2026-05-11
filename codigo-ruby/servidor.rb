@@ -91,5 +91,4 @@ loop do
     hora = Utils.receive_message(reference)
   end
 
-  
 end
