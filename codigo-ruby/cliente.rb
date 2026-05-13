@@ -9,9 +9,9 @@ require_relative "utils"
 def receive_format_message(socket)
   resposta = Utils.receive_message(socket)
   divisao = resposta.split("|")
-  resultado = partes[0]
-  relogio = partes[1].split(": ")
-  relogio_servidor = relogio_divido[1]
+  resultado = divisao[0]
+  relogio = divisao[1].split(": ")
+  relogio_servidor = relogio[1]
 
   return resultado, relogio_servidor
 end

@@ -29,12 +29,13 @@ context = ZMQ::Context.new
 
 socket, publisher, reference = Utils.create_context_ZMQ(context, true)
 
-mensagem = "#{nome_servidor}"
-Utils.send_message(reference, mensagem)
-rank = Utils.receive_message(reference)
-puts "#{rank}"
-
 loop do
+
+  mensagem = "registro|#{nome_servidor}|#{relogio_servidor}"
+  Utils.send_message(reference, mensagem)
+  rank = Utils.receive_message(reference)
+  puts "rank: #{rank}"
+
   mensagem = Utils.receive_message(socket)
 
   contador_mensagens += 1
@@ -85,14 +86,18 @@ loop do
   puts "#{reply}"
   sleep(1)
 
+  if contador_mensagens == 10
+    mensagem = "heartbeat|#{nome_servidor}|#{relogio_servidor}"
+    Utils.send_message(reference, mensagem)
+    hora = Utils.receive_message(reference)
+    relogio_servidor = hora.to_i
+    contador_mensagens = 0
+  end
+
   Utils.send_message(reference, "listar")
   lista_servidores = Utils.receive_message(reference)
   puts "#{lista_servidores}"
 
-  if contador_mensagens == 10
-    mensagem = "#{nome_servidor}"
-    Utils.send_message(reference, mensagem)
-    hora = Utils.receive_message(reference)
-  end
+
 
 end

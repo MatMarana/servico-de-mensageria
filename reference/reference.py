@@ -4,47 +4,70 @@ from datetime import datetime
 
 nomes_servidores = ["servidor-python", "servidor-csharp", "servidor-ruby"]
 servidores = {}
-rank_counter = 1
 
-# Função para registrar um servidor e atribuir um rank
-def registrar_servidor(nome):
-    global rank_counter
-    servidores[nome] = {
-        "rank": rank_counter,
-        "hora": 0
-    }
-    rank_counter += 1
+def registrar_servidor(nome, hora):
+    if nome not in servidores:
+        servidores[nome] = {
+            "rank": len(servidores) + 1,
+            "hora": hora,
+            "faltas": 0
+        }
+
     return servidores[nome]["rank"]
 
 # Função para retornar a lista de servidores
 def listar_servidores():
     resposta = ""
     for nome, dados in servidores.items():
-        resposta += f"Nome: {nome}|Rank: {dados["rank"]}"
+        resposta += f"servidor: {nome}|rank: {dados['rank']}\n"
     
     return resposta
 
-# Função para atualizar o heartbeat de um servidor
-def atualizar_heartbeat(nome):
-    servidores[nome]["hora"] = 10
-    return "OK"
+def atualizar_heartbeat(nome, hora):
+    if nome not in servidores:
+        rank = registrar_servidor(nome, hora)
+        return "SERVIDOR_REMOVIDO"
 
-# Função para remover servidores inativos
-def remover_inativos():
-    agora = datetime.now()
-    inativos = [
-        nome for nome, dados in servidores.items()
-        if (agora - dados["last_heartbeat"]).seconds > 30
-    ]
-    for nome in inativos:
-        del servidores[nome]
+    servidores[nome]["hora"] = hora
+    servidores[nome]["faltas"] = 0
+
+    return atualizar_hora()
 
 def atualizar_hora():
-    for nome, dados in servidores.items():
-        if dados["rank"] == 1:
-            return dados["hora"]
+    if not servidores:
+        return 0
 
-    return "Rank 1 não encontrado"
+    lider = min(
+        servidores.items(),
+        key=lambda item: item[1]["rank"]
+    )
+
+    return lider[1]["hora"]
+
+def atualizar_faltas():
+    inativos = []
+    for nome, dados in servidores.items():
+        dados["faltas"] += 1
+        if dados["faltas"] > 9:
+            inativos.append(nome)
+
+    for nome in inativos:
+        print(f"Removendo servidor: {nome}")
+        del servidores[nome]
+
+    reorganizar_ranks()
+
+def reorganizar_ranks():
+    servidores_ordenados = sorted(
+        servidores.items(),
+        key=lambda item: item[1]["rank"]
+    )
+
+    novo_rank = 1
+
+    for nome, dados in servidores_ordenados:
+        dados["rank"] = novo_rank
+        novo_rank += 1
 
 # Configuração do ZeroMQ
 context = zmq.Context()
@@ -56,15 +79,21 @@ print("Serviço de referência iniciado", flush=True)
 while True:
     mensagem_bin = socket.recv()
     mensagem = msgpack.unpackb(mensagem_bin, raw=False)
+    partes = mensagem.split("|")
+    operacao = partes[0]
 
-    if mensagem == "listar":
+    if operacao != "heartbeat":
+        atualizar_faltas()
+
+    if operacao == "listar":
         resposta = listar_servidores()
-    elif mensagem not in servidores:
-        if mensagem in nomes_servidores:
-            resposta = registrar_servidor(mensagem)
-    elif mensagem in servidores:
-       resposta = atualizar_heartbeat(mensagem)    
+    elif operacao == "registro":
+        nome = partes[1]
+        hora = int(partes[2])
+        resposta = registrar_servidor(nome, hora)
+    elif operacao == "heartbeat":
+        nome = partes[1]
+        hora = int(partes[2])
+        resposta = atualizar_heartbeat(nome, hora)
 
-
-    #remover_inativos()
     socket.send(msgpack.packb(resposta))
