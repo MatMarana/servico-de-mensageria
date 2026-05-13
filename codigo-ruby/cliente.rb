@@ -10,7 +10,7 @@ def receive_format_message(socket)
   resposta = Utils.receive_message(socket)
   divisao = resposta.split("|")
   resultado = divisao[0]
-  relogio = divisao[1].split(": ")
+  relogio = divisao[1].split(":")
   relogio_servidor = relogio[1]
 
   return resultado, relogio_servidor
@@ -35,7 +35,7 @@ loop do
 
   relogio_cliente += 1 #Incrementa o relógio lógico
 
-  mensagem_formatada = "login|#{nome}|#{time}|relogio: #{relogio_cliente}"
+  mensagem_formatada = "login|#{nome}|#{time}|relogio:#{relogio_cliente}"
   puts "#{mensagem_formatada}"
 
   Utils.send_message(socket, mensagem_formatada)
@@ -59,7 +59,7 @@ nomes_canais.each do |canal|
   
   relogio_cliente += 1 #Incrementa relógio lógico
 
-  mensagem_formatada = "canais|#{canal}|#{time}|relogio: #{relogio_cliente}"
+  mensagem_formatada = "canais|#{canal}|#{time}|relogio:#{relogio_cliente}"
   puts "#{mensagem_formatada}"
 
   Utils.send_message(socket, mensagem_formatada)
@@ -81,7 +81,7 @@ time = Time.now.strftime("%H:%M:%S")
 
 relogio_cliente += 1
 
-mensagem_formatada = "listar||#{time}|relogio: #{relogio_cliente}"
+mensagem_formatada = "listar||#{time}|relogio:#{relogio_cliente}"
 puts "#{mensagem_formatada}"
 
 Utils.send_message(socket, mensagem_formatada)
@@ -108,7 +108,7 @@ loop do
 
   relogio_cliente += 1
 
-  mensagem_cliente = "canal|#{canal}-mensagem numero #{contador}|#{time}|relogio: #{relogio_cliente}"
+  mensagem_cliente = "canal|#{canal}-mensagem numero #{contador}|#{time}|relogio:#{relogio_cliente}"
 
   Utils.send_message(socket, mensagem_cliente)
 

@@ -21,7 +21,7 @@ def registrar_servidor(nome, hora):
 def listar_servidores():
     resposta = ""
     for nome, dados in servidores.items():
-        resposta += f"servidor: {nome}|rank: {dados['rank']}\n"
+        resposta += f"servidor:{nome}|rank:{dados['rank']}\n"
     
     return resposta
 
@@ -34,10 +34,7 @@ def atualizar_heartbeat(nome, hora):
     servidores[nome]["faltas"] = 0
     coordenador = obter_coordenador()
 
-    return (
-        f"coordenador|{coordenador}"
-        f"|hora:{obter_hora_coordenador()}"
-    )
+    return (f"coordenador|{coordenador}|hora:{obter_hora_coordenador()}")
 
 def atualizar_hora():
     if not servidores:
@@ -54,7 +51,7 @@ def atualizar_faltas():
     inativos = []
     for nome, dados in servidores.items():
         dados["faltas"] += 1
-        if dados["faltas"] > 15:
+        if dados["faltas"] >= 15:
             inativos.append(nome)
 
     for nome in inativos:
