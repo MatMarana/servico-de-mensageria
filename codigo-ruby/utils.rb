@@ -9,7 +9,7 @@ module Utils
 
             socket.connect("tcp://broker:5556")
             publisher.connect("tcp://proxy:5558")
-            reference.connect("tcp://refrencia:5559")
+            reference.connect("tcp://reference:5559")
             
             return socket, publisher, reference
         end

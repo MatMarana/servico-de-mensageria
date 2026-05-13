@@ -29,8 +29,10 @@ context = ZMQ::Context.new
 
 socket, publisher, reference = Utils.create_context_ZMQ(context, true)
 
-Utils.send_message(reference, nome_servidor)
+mensagem = "#{nome_servidor}"
+Utils.send_message(reference, mensagem)
 rank = Utils.receive_message(reference)
+puts "#{rank}"
 
 loop do
   mensagem = Utils.receive_message(socket)
@@ -41,7 +43,8 @@ loop do
   operacao = partes[0]
   informacao = partes[1]
   tempo = partes[2]
-  relogio_cliente = partes[3]
+  relogio_divido = partes[3].split(": ")
+  relogio_cliente = relogio_divido[1] 
 
   relogio_servidor = Utils.get_bigger_clock(relogio_cliente, relogio_servidor)
 
@@ -50,15 +53,15 @@ loop do
   case operacao
     when "login"
       if lista_nomes.include?(informacao)
-        reply = "erro|#{relogio_servidor}"
+        reply = "erro|relogio: #{relogio_servidor}"
       else
-        reply = "login|#{relogio_servidor}"
+        reply = "login|relogio: #{relogio_servidor}"
       end
     when "canais"
       if informacao == "EOF"
-        reply = "erro|#{relogio_servidor}"
+        reply = "erro|relogio: #{relogio_servidor}"
       else
-        reply = "sucesso|#{relogio_servidor}"
+        reply = "sucesso|relogio: #{relogio_servidor}"
         lista_canais << informacao
       end
     when "listar"
@@ -68,9 +71,9 @@ loop do
       canal = conteudo[0]
       mensagem = conteudo[1]
       if conteudo
-        reply = "ok|#{relogio_servidor}"
+        reply = "ok|relogio: #{relogio_servidor}"
       else
-        reply = "erro|#{relogio_servidor}"
+        reply = "erro|relogio: #{relogio_servidor}"
       end
       publisher.send_string(canal, ZMQ::SNDMORE)
       sleep(1)
@@ -87,7 +90,8 @@ loop do
   puts "#{lista_servidores}"
 
   if contador_mensagens == 10
-    Utils.send_message(reference, nome_servidor)
+    mensagem = "#{nome_servidor}"
+    Utils.send_message(reference, mensagem)
     hora = Utils.receive_message(reference)
   end
 

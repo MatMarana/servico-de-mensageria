@@ -8,9 +8,10 @@ require_relative "utils"
 
 def receive_format_message(socket)
   resposta = Utils.receive_message(socket)
-  partes = resposta.split("|")
+  divisao = resposta.split("|")
   resultado = partes[0]
-  relogio_servidor = partes[1]
+  relogio = partes[1].split(": ")
+  relogio_servidor = relogio_divido[1]
 
   return resultado, relogio_servidor
 end
@@ -34,7 +35,7 @@ loop do
 
   relogio_cliente += 1 #Incrementa o relógio lógico
 
-  mensagem_formatada = "login|#{nome}|#{time}|#{relogio_cliente}"
+  mensagem_formatada = "login|#{nome}|#{time}|relogio: #{relogio_cliente}"
   puts "#{mensagem_formatada}"
 
   Utils.send_message(socket, mensagem_formatada)
@@ -58,7 +59,7 @@ nomes_canais.each do |canal|
   
   relogio_cliente += 1 #Incrementa relógio lógico
 
-  mensagem_formatada = "canais|#{canal}|#{time}|#{relogio_cliente}"
+  mensagem_formatada = "canais|#{canal}|#{time}|relogio: #{relogio_cliente}"
   puts "#{mensagem_formatada}"
 
   Utils.send_message(socket, mensagem_formatada)
@@ -77,9 +78,10 @@ nomes_canais.each do |canal|
 end
 
 time = Time.now.strftime("%H:%M:%S")
+
 relogio_cliente += 1
 
-mensagem_formatada = "listar||#{time}|#{relogio_cliente}"
+mensagem_formatada = "listar||#{time}|relogio: #{relogio_cliente}"
 puts "#{mensagem_formatada}"
 
 Utils.send_message(socket, mensagem_formatada)
@@ -99,12 +101,14 @@ sleep(1)
 end
 
 loop do
+  topico = ""
+  mensagem_publicada = ""
   canal = canais_inscritos.sample
   time = Time.now.strftime("%H:%M:%S")
 
   relogio_cliente += 1
 
-  mensagem_cliente = "canal|#{canal}-Mensagem Numero #{contador}|#{time}|#{relogio_cliente}"
+  mensagem_cliente = "canal|#{canal}-mensagem numero #{contador}|#{time}|relogio: #{relogio_cliente}"
 
   Utils.send_message(socket, mensagem_cliente)
 
@@ -116,12 +120,10 @@ loop do
 
   relogio_cliente = Utils.get_bigger_clock(relogio_cliente, relogio_servidor)
 
-  topico = ""
   subscriber.recv_string(topico)
 
   sleep(1)
 
-  mensagem_publicada = ""
   subscriber.recv_string(mensagem_publicada)
   puts "RECEBENDO: #{topico} | MSG: #{mensagem_publicada}"
 

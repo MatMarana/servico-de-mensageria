@@ -9,12 +9,11 @@ rank_counter = 1
 # Função para registrar um servidor e atribuir um rank
 def registrar_servidor(nome):
     global rank_counter
-    if nome not in servidores:
-        servidores[nome] = {
-            "rank": rank_counter,
-            "last_heartbeat": datetime.now()
-        }
-        rank_counter += 1
+    servidores[nome] = {
+        "rank": rank_counter,
+        "hora": 0
+    }
+    rank_counter += 1
     return servidores[nome]["rank"]
 
 # Função para retornar a lista de servidores
@@ -27,10 +26,8 @@ def listar_servidores():
 
 # Função para atualizar o heartbeat de um servidor
 def atualizar_heartbeat(nome):
-    if nome in servidores:
-        servidores[nome]["last_heartbeat"] = datetime.now()
-        return "OK"
-    return "ERRO"
+    servidores[nome]["hora"] = 10
+    return "OK"
 
 # Função para remover servidores inativos
 def remover_inativos():
@@ -41,6 +38,13 @@ def remover_inativos():
     ]
     for nome in inativos:
         del servidores[nome]
+
+def atualizar_hora():
+    for nome, dados in servidores.items():
+        if dados["rank"] == 1:
+            return dados["hora"]
+
+    return "Rank 1 não encontrado"
 
 # Configuração do ZeroMQ
 context = zmq.Context()
@@ -57,11 +61,10 @@ while True:
         resposta = listar_servidores()
     elif mensagem not in servidores:
         if mensagem in nomes_servidores:
-            rank = registrar_servidor(mensagem)
-            resposta = rank
+            resposta = registrar_servidor(mensagem)
     elif mensagem in servidores:
-        resposta = atualizar_heartbeat(conteudo)    
+       resposta = atualizar_heartbeat(mensagem)    
 
 
-    remover_inativos()
+    #remover_inativos()
     socket.send(msgpack.packb(resposta))
