@@ -50,6 +50,14 @@ def atualizar_relogio(recebido):
     contador_logico = max(contador_logico, recebido) + 1
     return contador_logico
 
+# Função para extrair o relógio da resposta do servidor
+def extrair_relogio(resposta):
+    try:
+        partes = resposta.split("|")
+        relogio = int(partes[-1].split(":")[-1])
+        return relogio
+    except:
+        return 0
 #============================================
 
 
@@ -75,14 +83,15 @@ subscriber = True
 if not logado:
     for usuario in nomes:
         incrementar_relogio()
-        mensagem = f"login|{usuario}|{datetime.now()}|{contador_logico}"
+        mensagem = f"login|{usuario}|{datetime.now()}|relogio:{contador_logico}"
         mensagem = mensagem.strip().lower()
         print(f"{mensagem}", flush=True)
         time.sleep(1)
         socket.send(msgpack.packb(mensagem))
         resposta_bin = socket.recv()
         resposta = msgpack.unpackb(resposta_bin, raw=False)
-        atualizar_relogio(contador_logico)
+        relogio_recebido = extrair_relogio(resposta)
+        atualizar_relogio(relogio_recebido)
         if resposta == "login":
             logado = True
             break
@@ -93,14 +102,15 @@ if not logado:
 if logado and not canal_bool:
     for canal in canais:
         incrementar_relogio()
-        mensagem = f"canais|{canal}|{datetime.now()}|{contador_logico}"
+        mensagem = f"canais|{canal}|{datetime.now()}|relogio:{contador_logico}"
         mensagem = mensagem.strip().lower()
         print(f"{mensagem}", flush=True)
         time.sleep(1)
         socket.send(msgpack.packb(mensagem))
         resposta_bin = socket.recv()
         resposta = msgpack.unpackb(resposta_bin, raw=False)
-        atualizar_relogio(contador_logico)
+        relogio_recebido = extrair_relogio(resposta)
+        atualizar_relogio(relogio_recebido)
         if resposta == "erro":
             canal_bool = True
             break
@@ -110,14 +120,15 @@ if logado and not canal_bool:
 if canal_bool and listar:
     while(listar):
         incrementar_relogio()
-        mensagem = f"listar||{datetime.now()}|{contador_logico}"
+        mensagem = f"listar||{datetime.now()}|relogio:{contador_logico}"
         mensagem = mensagem.strip().lower()
         print(f"{mensagem}", flush=True)
         time.sleep(1)
         socket.send(msgpack.packb(mensagem))
         resposta_bin = socket.recv()
         resposta = msgpack.unpackb(resposta_bin, raw=False)
-        atualizar_relogio(contador_logico)
+        relogio_recebido = extrair_relogio(resposta)
+        atualizar_relogio(relogio_recebido)
         listar = False
 
 
@@ -132,14 +143,15 @@ if not listar and subscriber:
         indice = random.randint(0, 2)
         i += 1
         incrementar_relogio()
-        mensagem = f"canal|{canais_aleatorios[indice]}-teste{i}|{datetime.now()}|{contador_logico}"
+        mensagem = f"canal|{canais_aleatorios[indice]}-teste{i}|{datetime.now()}|relogio:{contador_logico}"
         mensagem = mensagem.strip().lower()
         print(f"{mensagem}", flush=True)
         time.sleep(1)
         socket.send(msgpack.packb(mensagem))
         resposta_bin = socket.recv()
         resposta = msgpack.unpackb(resposta_bin, raw=False)
-        atualizar_relogio(contador_logico)
+        relogio_recebido = extrair_relogio(resposta)
+        atualizar_relogio(relogio_recebido)
         topico = sub.recv_string()
         time.sleep(1)
         mensagem_publicada = sub.recv_string()
