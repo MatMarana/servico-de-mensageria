@@ -8,4 +8,6 @@ RUN apk add --no-cache \
 
 RUN gem install ffi-rzmq msgpack 
 
+COPY ./codigo-ruby/utils.rb .
+
 CMD ["ruby", "main.rb"]

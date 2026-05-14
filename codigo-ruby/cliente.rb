@@ -4,35 +4,49 @@ require "ffi-rzmq"
 require "msgpack"
 require "time"
 
+require_relative "utils"
+
+def receive_format_message(socket)
+  resposta = Utils.receive_message(socket)
+  divisao = resposta.split("|")
+  resultado = divisao[0]
+  relogio = divisao[1].split(":")
+  relogio_servidor = relogio[1]
+
+  return resultado, relogio_servidor
+end
+
 nomes_login = ["Ale", "Gabriel", "Giovanni", "Henrique", "Kawan", "Leo", "Mateus", "Pedro", "Roberto", "Tiago"]
 nomes_canais = ["IA", "TCC", "ESTRUTURA DE DADOS", "COMPLEXIDADE DE ALGORITMOS", "ARQUITETURA DE COMPUTADORES", "EOF"]
+
 canais_cadastrados = []
 canais_inscritos = []
 
+relogio_cliente = 0
+contador = 0
+
 context = ZMQ::Context.new
 
-socket = context.socket(ZMQ::REQ)
-socket.connect("tcp://broker:5555")
-
-subscriber = context.socket(ZMQ::SUB)
-subscriber.connect("tcp://proxy:5557")
+socket, subscriber = Utils.create_context_ZMQ(context, false)
 
 loop do
-  nome = nomes_login.sample
-  string = ""
+  nome = nomes_login.sample #Pega um nome de forma aleatória
   time = Time.now.strftime("%H:%M:%S")
 
-  mensagem_formatada = "login|#{nome}|#{time}"
+  relogio_cliente += 1 #Incrementa o relógio lógico
+
+  mensagem_formatada = "login|#{nome}|#{time}|relogio:#{relogio_cliente}"
   puts "#{mensagem_formatada}"
-  time = Time.now.strftime("%H:%M:%S")
-  mensagem = (mensagem_formatada).to_msgpack
-  socket.send_string(mensagem)
+
+  Utils.send_message(socket, mensagem_formatada)
+  
   sleep(1)
 
-  socket.recv_string(string)
-  resposta = MessagePack.unpack(string)
+  resultado, relogio_servidor = receive_format_message(socket)
 
-  if resposta == "login"
+  relogio_cliente = Utils.get_bigger_clock(relogio_cliente, relogio_servidor)
+
+  if resultado == "login"
     break
   end
 
@@ -41,39 +55,40 @@ loop do
 end
 
 nomes_canais.each do |canal|
-  string = ""
   time = Time.now.strftime("%H:%M:%S")
+  
+  relogio_cliente += 1 #Incrementa relógio lógico
 
-  mensagem_formatada = "canais|#{canal}|#{time}"
+  mensagem_formatada = "canais|#{canal}|#{time}|relogio:#{relogio_cliente}"
   puts "#{mensagem_formatada}"
 
-  mensagem = (mensagem_formatada).to_msgpack
-  socket.send_string(mensagem)
+  Utils.send_message(socket, mensagem_formatada)
+
   sleep(1)
 
-  socket.recv_string(string)
-  resposta = MessagePack.unpack(string)
+  resultado, relogio_servidor = receive_format_message(socket)
 
-  if resposta == "erro"
+  relogio_cliente = Utils.get_bigger_clock(relogio_cliente, relogio_servidor)
+
+  if resultado  == "erro"
     break
   end
 
   sleep(1)
 end
 
-string = ""
 time = Time.now.strftime("%H:%M:%S")
 
-mensagem_formatada = "listar||#{time}"
+relogio_cliente += 1
 
+mensagem_formatada = "listar||#{time}|relogio:#{relogio_cliente}"
 puts "#{mensagem_formatada}"
 
-mensagem = (mensagem_formatada).to_msgpack
-socket.send_string(mensagem)
+Utils.send_message(socket, mensagem_formatada)
+
 sleep(1)
 
-socket.recv_string(string)
-resposta = MessagePack.unpack(string)
+resposta = Utils.receive_message(socket)
 
 canais_cadastrados = resposta.scan(/:\s*(.+)/).flatten.map(&:strip)
 
@@ -85,30 +100,35 @@ sleep(1)
   subscriber.setsockopt(ZMQ::SUBSCRIBE, canal)
 end
 
-contador = 0
-
 loop do
+  topico = ""
+  mensagem_publicada = ""
   canal = canais_inscritos.sample
   time = Time.now.strftime("%H:%M:%S")
 
-  mensagem_cliente = "canal|#{canal}-Mensagem Numero #{contador}|#{time}"
-  mensagem_cliente_bin = (mensagem_cliente).to_msgpack
-  socket.send_string(mensagem_cliente_bin)
-  sleep(1)
+  relogio_cliente += 1
+
+  mensagem_cliente = "canal|#{canal}-mensagem numero #{contador}|#{time}|relogio:#{relogio_cliente}"
+
+  Utils.send_message(socket, mensagem_cliente)
 
   puts "#{mensagem_cliente}"
-
-  resposta = ''
-  socket.recv_string(resposta)
-
-  topico = ''
-  subscriber.recv_string(topico)
+  
   sleep(1)
 
-  mensagem_publicada = ''
+  resultado, relogio_servidor = receive_format_message(socket)
+
+  relogio_cliente = Utils.get_bigger_clock(relogio_cliente, relogio_servidor)
+
+  subscriber.recv_string(topico)
+
+  sleep(1)
+
   subscriber.recv_string(mensagem_publicada)
   puts "RECEBENDO: #{topico} | MSG: #{mensagem_publicada}"
-  contador = contador + 1
+
+  contador += 1
+
   sleep(1)
 
 end
