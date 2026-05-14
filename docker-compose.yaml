@@ -61,27 +61,27 @@ services:
       - servidor-ruby
 
 # # # ------------- PYTHON -------------
-#   servidor-python:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile-python
-#     container_name: servidor-python
-#     volumes:
-#       - ./codigo-python/servidor.py:/app/main.py
-#     depends_on:
-#       - broker
-#       - proxy
-#       - reference
+  servidor-python:
+    build:
+      context: .
+      dockerfile: Dockerfile-python
+    container_name: servidor-python
+    volumes:
+      - ./codigo-python/servidor.py:/app/main.py
+    depends_on:
+      - broker
+      - proxy
+      - reference
 
-#   cliente-python:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile-python
-#     container_name: cliente-python
-#     volumes:
-#       - ./codigo-python/cliente.py:/app/main.py
-#     depends_on:
-#       - servidor-python
+  cliente-python:
+    build:
+      context: .
+      dockerfile: Dockerfile-python
+    container_name: cliente-python
+    volumes:
+      - ./codigo-python/cliente.py:/app/main.py
+    depends_on:
+      - servidor-python
 
 # # ------------- CSHARP -------------
 #   servidor-csharp:

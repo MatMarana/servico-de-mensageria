@@ -36,17 +36,19 @@ def adiciona_canal(canais:list, canal: str):
 # Adicionando o relógio lógico
 contador_logico = 0
 
-# Função para incrementar o relógio lógico
-def incrementar_relogio():
-    global contador_logico
-    contador_logico += 1
-    return contador_logico
 
 # Função para atualizar o relógio lógico ao receber uma mensagem
 def atualizar_relogio(recebido):
     global contador_logico
-    contador_logico = max(contador_logico, recebido) + 1
+    contador_logico = max(contador_logico, recebido)
     return contador_logico
+
+# Função para extrair relógio recebido
+def extrair_relogio(valor):
+    try:
+        return int(valor.split(":")[1])
+    except:
+        return 0
 
 # Configuração para comunicação com o serviço de referência
 ref_socket = context.socket(zmq.REQ)
@@ -63,20 +65,21 @@ while True:
     conteudo = lista_msg[1]
     timestamp = lista_msg[2]
 
-    # Incrementa o relógio lógico antes de enviar a mensagem
-    incrementar_relogio()
+    relogio_cliente = extrair_relogio(lista_msg[3])
+    contador_logico = atualizar_relogio(relogio_cliente)
+    contador_logico += 1
 
     if operacao == "login":
         if conteudo in usuarios:
-            resposta = "erro"
+            resposta = f"erro|relogio:{contador_logico}"
         else:
-            resposta = "login"
+            resposta = f"login|relogio:{contador_logico}"
     elif operacao == "canais":
         if conteudo != "eof":
             saida_operacao = adiciona_canal(canais_recebidos, conteudo)
-            resposta = "sucesso"
+            resposta = f"sucesso|relogio:{contador_logico}"
         else:
-            resposta = "erro"
+            resposta = f"erro|relogio:{contador_logico}"
     elif operacao == "listar":
         resposta = saida_operacao
     elif operacao == "canal":
@@ -86,20 +89,22 @@ while True:
         pub.send_string(canal, flags=zmq.SNDMORE)
         pub.send_string(mensagem_conteudo)
         print(f"PUBLICANDO: {canal} | MSG:{mensagem_conteudo}")
-        resposta = "ok" 
+        resposta = f"ok|relogio:{contador_logico}"
     else:
-        resposta = "erro inesperado"
+        resposta = f"erro inesperado|relogio:{contador_logico}"
 
-    # Atualiza o relógio lógico ao receber uma mensagem
-    atualizar_relogio(int(lista_msg[3]))
+    # Extrai o relógio enviado pelo cliente
+
+    # Atualiza o relógio lógico
 
     # Incrementa o contador de mensagens e envia heartbeat se necessário
-    contador_mensagens += 1
-    if contador_mensagens >= 10:
-        ref_socket.send(msgpack.packb({"operacao": "heartbeat", "conteudo": "servidor"}))
-        resposta_ref = msgpack.unpackb(ref_socket.recv(), raw=False)
-        print(f"Heartbeat enviado: {resposta_ref}", flush=True)
-        contador_mensagens = 0
+    # contador_mensagens += 1
+    # if contador_mensagens >= 10:
+    #     ref_socket.send(msgpack.packb({"operacao": "heartbeat", "conteudo": "servidor"}))
+    #     resposta_ref = msgpack.unpackb(ref_socket.recv(), raw=False)
+    #     print(f"Heartbeat enviado: {resposta_ref}", flush=True)
+    #     contador_mensagens = 0
+
 
     resposta = resposta.strip().lower()
     print(f"{resposta}", flush=True)

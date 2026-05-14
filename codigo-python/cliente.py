@@ -47,7 +47,7 @@ def incrementar_relogio():
 # Função para atualizar o relógio lógico ao receber uma mensagem
 def atualizar_relogio(recebido):
     global contador_logico
-    contador_logico = max(contador_logico, recebido) + 1
+    contador_logico = max(contador_logico, recebido)
     return contador_logico
 
 # Função para extrair o relógio da resposta do servidor
@@ -92,6 +92,7 @@ if not logado:
         resposta = msgpack.unpackb(resposta_bin, raw=False)
         relogio_recebido = extrair_relogio(resposta)
         atualizar_relogio(relogio_recebido)
+        
         if resposta == "login":
             logado = True
             break
@@ -156,13 +157,3 @@ if not listar and subscriber:
         time.sleep(1)
         mensagem_publicada = sub.recv_string()
         print(f"RECEBENDO: {topico} | MSG:{mensagem_publicada}")
-
-
-
-
-
-
-
-
-
-
