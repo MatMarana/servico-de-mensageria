@@ -35,25 +35,25 @@ subscriber.setsockopt(ZMQ::SUBSCRIBE, "server")
 sleep(1)
 
 # Cadastra servidor na lista de ranks - Usado na referência
-# mensagem = "registro|#{nome_servidor}|#{relogio_servidor}"
-# Utils.send_message(reference, mensagem)
-# resposta = Utils.receive_message(reference)
-# puts "#{resposta}"
+mensagem = "registro|#{nome_servidor}|#{relogio_servidor}"
+Utils.send_message(reference, mensagem)
+resposta = Utils.receive_message(reference)
+puts "#{resposta}"
 
-# Thread.new do
-#   loop do
-#     topico = ""
-#     mensagem = ""
+Thread.new do
+  loop do
+    topico = ""
+    mensagem = ""
 
-#     subscriber.recv_string(topico)
-#     sleep(1)
-#     subscriber.recv_string(mensagem)
-#     $coordenador = mensagem
+    subscriber.recv_string(topico)
+    sleep(1)
+    subscriber.recv_string(mensagem)
+    $coordenador = mensagem
 
-#     puts "RECEBENDO #{topico} | MSG: #{mensagem}"  
-#     puts "Novo coordenador: #{mensagem}"
-#   end
-# end
+    puts "RECEBENDO #{topico} | MSG: #{mensagem}"  
+    puts "Novo coordenador: #{mensagem}"
+  end
+end
 
 loop do
 
@@ -107,48 +107,48 @@ loop do
   puts "#{reply}"
   sleep(1)
 
-  # if contador_mensagens % 15 == 0
-  #   mensagem = "heartbeat|#{nome_servidor}|#{relogio_servidor}"
-  #   puts"#{mensagem}"
-  #   Utils.send_message(reference, mensagem)
+  if contador_mensagens % 15 == 0
+    mensagem = "heartbeat|#{nome_servidor}|#{relogio_servidor}"
+    puts"#{mensagem}"
+    Utils.send_message(reference, mensagem)
 
-  #   resposta = Utils.receive_message(reference)
+    resposta = Utils.receive_message(reference)
 
-  #   mensagem = "relogio|#{nome_servidor}|#{relogio_servidor}"
-  #   puts "#{mensagem}"
-  #   Utils.send_message(reference, mensagem)
+    mensagem = "relogio|#{nome_servidor}|#{relogio_servidor}"
+    puts "#{mensagem}"
+    Utils.send_message(reference, mensagem)
 
-  #   resposta = Utils.receive_message(reference)
+    resposta = Utils.receive_message(reference)
 
-  #   if resposta == "SERVIDOR_REMOVIDO"
-  #     mensagem = "eleicao||"
-  #     puts "#{mensagem}"
-  #     Utils.send_message(reference,mensagem)
+    if resposta == "SERVIDOR_REMOVIDO"
+      mensagem = "eleicao||"
+      puts "#{mensagem}"
+      Utils.send_message(reference,mensagem)
 
-  #     resposta = Utils.receive_message(reference)
-  #     partes = resposta.split("|")
-  #     $coordenador = partes[1]
-  #     puts "Novo coordenador #{$coordenador}"
+      resposta = Utils.receive_message(reference)
+      partes = resposta.split("|")
+      $coordenador = partes[1]
+      puts "Novo coordenador #{$coordenador}"
 
-  #     if $coordenador == nome_servidor
-  #       publisher.send_string("server", ZMQ::SNDMORE)
-  #       sleep(1)
-  #       publisher.send_string("servidor-ruby")
-  #       sleep(1)
+      if $coordenador == nome_servidor
+        publisher.send_string("server", ZMQ::SNDMORE)
+        sleep(1)
+        publisher.send_string("servidor-ruby")
+        sleep(1)
 
-  #       puts "PUBLICANDO: server | MSG: servidor-ruby"
-  #     end
+        puts "PUBLICANDO: server | MSG: servidor-ruby"
+      end
 
-  #   else
-  #     partes = resposta.split("|")
-  #     nova_hora = partes[1].to_i
-  #     relogio_servidor = nova_hora
-  #     puts "Relógio sincronizado #{relogio_servidor}"
-  #   end
-  # end
+    else
+      partes = resposta.split("|")
+      nova_hora = partes[1].to_i
+      relogio_servidor = nova_hora
+      puts "Relógio sincronizado #{relogio_servidor}"
+    end
+  end
 
-  # Utils.send_message(reference, "listar||")
-  # lista_servidores = Utils.receive_message(reference)
-  # puts "#{lista_servidores}"
+  Utils.send_message(reference, "listar||")
+  lista_servidores = Utils.receive_message(reference)
+  puts "#{lista_servidores}"
   
 end
