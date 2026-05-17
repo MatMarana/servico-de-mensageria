@@ -35,15 +35,16 @@ public class ClientHelpers
         string responseObj = MessagePackSerializer.Deserialize<string>(responseBytes);
         message_raw = responseObj.ToLower();
 
-        if (message.Contains("|"))
+        if (message_raw.Contains("|"))
         {
             message = message_raw.Split("|")[0];
             relogio_servidor = int.Parse(message_raw.Split("|")[1].Split(":")[1].Trim());
 
             relogio_cliente = relogio_cliente > relogio_servidor ? relogio_cliente : relogio_servidor;
+            return message;
         }
 
-        return message;
+        return message_raw;
     }
 
     public static string[] ReadFile(string path)
