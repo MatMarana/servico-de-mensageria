@@ -39,7 +39,7 @@ contador_logico = 0
 
 # Função para atualizar o relógio lógico ao receber uma mensagem
 def atualizar_relogio(recebido):
-    global contador_logico
+    global contador_logico  # Declaração global movida para o início da função
     contador_logico = max(contador_logico, recebido)
     return contador_logico
 
@@ -52,10 +52,35 @@ def extrair_relogio(valor):
 
 # Configuração para comunicação com o serviço de referência
 ref_socket = context.socket(zmq.REQ)
-ref_socket.connect("tcp://referencia:5560")
+ref_socket.connect("tcp://referencia:5559")
 
 # Contador de mensagens para heartbeat
 contador_mensagens = 0
+
+# Variável global para armazenar o coordenador
+coordenador = None
+
+# Função para iniciar uma eleição
+def iniciar_eleicao():
+    global coordenador
+    mensagem = "eleicao||"
+    ref_socket.send(msgpack.packb(mensagem))
+    resposta = msgpack.unpackb(ref_socket.recv(), raw=False)
+    partes = resposta.split("|")
+    coordenador = partes[1]
+    print(f"Novo coordenador: {coordenador}", flush=True)
+
+# Função para sincronizar relógios usando o algoritmo de Berkeley
+def sincronizar_relogio():
+    global contador_logico  # Declaração global adicionada
+    if coordenador == "servidor-python":
+        mensagem = f"relogio|{contador_logico}"
+        ref_socket.send(msgpack.packb(mensagem))
+        resposta = msgpack.unpackb(ref_socket.recv(), raw=False)
+        partes = resposta.split("|")
+        nova_hora = int(partes[1])
+        contador_logico = nova_hora
+        print(f"Relógio sincronizado: {contador_logico}", flush=True)
 
 while True:
     mensagem_bin = socket.recv()
@@ -93,18 +118,17 @@ while True:
     else:
         resposta = f"erro inesperado|relogio:{contador_logico}"
 
-    # Extrai o relógio enviado pelo cliente
+    # Incrementa o contador de mensagens e verifica se é necessário enviar heartbeat
+    contador_mensagens += 1
+    if contador_mensagens % 15 == 0:
+        mensagem = f"heartbeat|servidor-python|{contador_logico}"
+        ref_socket.send(msgpack.packb(mensagem))
+        resposta = msgpack.unpackb(ref_socket.recv(), raw=False)
 
-    # Atualiza o relógio lógico
-
-    # Incrementa o contador de mensagens e envia heartbeat se necessário
-    # contador_mensagens += 1
-    # if contador_mensagens >= 10:
-    #     ref_socket.send(msgpack.packb({"operacao": "heartbeat", "conteudo": "servidor"}))
-    #     resposta_ref = msgpack.unpackb(ref_socket.recv(), raw=False)
-    #     print(f"Heartbeat enviado: {resposta_ref}", flush=True)
-    #     contador_mensagens = 0
-
+        if resposta == "SERVIDOR_REMOVIDO":
+            iniciar_eleicao()
+        else:
+            sincronizar_relogio()
 
     resposta = resposta.strip().lower()
     print(f"{resposta}", flush=True)
