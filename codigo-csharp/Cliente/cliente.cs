@@ -42,7 +42,7 @@ class Program
                     break;
 
                 case "subscribing":
-                    subscribedChannels = Subscribing(subSocket);
+                    subscribedChannels = Subscribing(subSocket, receivedChannels);
                     message = "...";
                     break;
 
@@ -68,7 +68,7 @@ class Program
         int randomIndex = random.Next(0, 3);
         string mensagem = subscribedChannels[randomIndex] + "-" + "Rock N Roll " + incremento.ToString();
         shipping = ClientHelpers.FormatShipping("canal", mensagem, ref relogio_cliente);
-        message = ClientHelpers.SendToServer(shipping, client);
+        message = ClientHelpers.SendToServer(shipping, client, ref relogio_cliente);
 
         Thread.Sleep(100);
 
@@ -103,7 +103,7 @@ class Program
         string shipping, message;
 
         shipping = ClientHelpers.FormatShipping("listar", "", ref relogio_cliente);
-        message = ClientHelpers.SendToServer(shipping, client);
+        message = ClientHelpers.SendToServer(shipping, client, ref relogio_cliente);
 
         return ClientHelpers.FormatChannelsList(message);
     }
@@ -113,7 +113,7 @@ class Program
         string shipping, message;
 
         shipping = ClientHelpers.FormatShipping("canais", channel, ref relogio_cliente);
-        message = ClientHelpers.SendToServer(shipping, client);
+        message = ClientHelpers.SendToServer(shipping, client, ref relogio_cliente);
 
         return message;
     }
