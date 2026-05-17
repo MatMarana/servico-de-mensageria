@@ -36,6 +36,15 @@ public class ServerHelpers
         return loadedNames;
     }
 
+    public static string EnviaMsgReferencia(RequestSocket socket, string comando)
+    {
+        byte[] bufferEnvio = MessagePackSerializer.Serialize(comando);
+        socket.SendFrame(bufferEnvio);
+
+        byte[] bufferResposta = socket.ReceiveFrameBytes();
+        return MessagePackSerializer.Deserialize<string>(bufferResposta).ToLower();
+    }
+
     public static string GetMessage(ResponseSocket server)
     {
         byte[] responseBytes = server.ReceiveFrameBytes();
