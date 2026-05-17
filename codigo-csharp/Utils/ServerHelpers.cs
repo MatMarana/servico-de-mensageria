@@ -5,12 +5,9 @@ using System.Collections.Generic;
 namespace Utils;
 public class ServerHelpers
 {
-    public static void SendToClient(string response, ResponseSocket server)
+    public static void SendToClient(string response, ResponseSocket server, int relogio_servidor)
     {
-        Message shippingObj = new Message
-        {
-            message = response
-        };
+        response = $"{response}| relogio: {relogio_servidor}";
         byte[] binaryData = MessagePackSerializer.Serialize(response);
 
         Console.WriteLine($"{response}");
@@ -60,5 +57,12 @@ public class ServerHelpers
     public static string GetOperation(string message)
     {
         return message.Split("|")[0].Trim().ToLower();
+    }
+
+    public static int GetClock(string message, int relogio_servidor)
+    {
+        int relogio_cliente = int.Parse(message.Split("|")[3].Split(":")[1].Trim().ToLower());
+        int maior_relogio = relogio_cliente > relogio_servidor ? relogio_cliente : relogio_servidor;
+        return maior_relogio++;
     }
 }

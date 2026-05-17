@@ -14,6 +14,7 @@ class Program
     {
         HashSet<string> loadedNames = ServerHelpers.BuildNamesList();
         HashSet<string> loadedChannels = new HashSet<string>();
+        int relogio_servidor = 0;
 
         using (var server = new ResponseSocket())
         using (var pubSocket = new PublisherSocket())
@@ -28,6 +29,7 @@ class Program
                 operation = ServerHelpers.GetOperation(message);
                 content = ServerHelpers.GetContent(message);
                 time = ServerHelpers.GetTime(message);
+                relogio_servidor = ServerHelpers.GetClock(message, relogio_servidor);
 
                 switch (operation)
                 {
@@ -51,7 +53,7 @@ class Program
                         response = "...";
                         break;
                 }
-                ServerHelpers.SendToClient(response, server);
+                ServerHelpers.SendToClient(response, server, relogio_servidor);
             }
         }
     }

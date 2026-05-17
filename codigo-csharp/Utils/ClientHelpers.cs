@@ -13,15 +13,16 @@ public class ClientHelpers
 
         return channelsList;
     }
-    public static string FormatShipping(string operation, string content)
+    public static string FormatShipping(string operation, string content, int relogio_cliente)
     {
         string time = DateTime.Now.ToString("HH:mm:ss");
-        return $"{operation}|{content}|{time}".ToLower();
+        return $"{operation}|{content}|{time}|relogio: {relogio_cliente}".ToLower();
     }
 
-    public static string SendToServer(string shipping, RequestSocket client)
+    public static string SendToServer(string shipping, RequestSocket client, ref int relogio_cliente)
     {
-        string message;
+        string message, message_raw;
+        int relogio_servidor;
 
         Message shippingObj = new Message
         {
@@ -36,7 +37,12 @@ public class ClientHelpers
 
         byte[] responseBytes = client.ReceiveFrameBytes();
         string responseObj = MessagePackSerializer.Deserialize<string>(responseBytes);
-        message = responseObj.ToLower();
+        message_raw = responseObj.ToLower();
+
+        message = message_raw.Split("|")[0];
+        relogio_servidor = int.Parse(message_raw.Split("|")[1].Split(":")[1].Trim());
+
+        relogio_cliente = relogio_cliente > relogio_servidor ? relogio_cliente : relogio_servidor;
 
         return message;
     }
