@@ -51,7 +51,7 @@ def atualizar_faltas():
     inativos = []
     for nome, dados in servidores.items():
         dados["faltas"] += 1
-        if dados["faltas"] >= 15:
+        if dados["faltas"] > 15:
             inativos.append(nome)
 
     for nome in inativos:
