@@ -36,6 +36,18 @@ public class ServerHelpers
         return loadedNames;
     }
 
+    public static void WriteMessage(string message, string resposta)
+    {
+        string txtPath1 = "mensagens_txt/arquivo1.txt";
+        string txtPath2 = "mensagens_txt/arquivo2.txt";
+
+        string row = $"servidor-csharp|req:{message}|reply:{resposta}\n";
+
+        File.AppendAllText(txtPath1, $"servidor-csharp|req:{message}|reply:{resposta}\n");
+        File.AppendAllText(txtPath2, $"servidor-csharp|req:{message}|reply:{resposta}\n");
+        Thread.Sleep(1000);
+    }
+
     public static string EnviaMsgReferencia(RequestSocket socket, string comando)
     {
         byte[] bufferEnvio = MessagePackSerializer.Serialize(comando);

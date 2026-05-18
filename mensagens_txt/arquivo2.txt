@@ -1,3 +1,21 @@
 servidor-ruby|req:login|henrique|2026-05-18 13:13:03.150978|relogio:1|reply:login|relogio:2
 servidor-ruby|req:canais|volksvagen|2026-05-18 13:13:05.348531|relogio:3|reply:sucesso|relogio:4
 servidor-ruby|req:canais|fiat|2026-05-18 13:13:07.351390|relogio:5|reply:sucesso|relogio:6
+servidor-ruby|req:login|Tiago|13:43:04|relogio:1|reply:login|relogio:2
+servidor-csharp|req:login|henrique|2026-05-18 13:43:04.403640|relogio:1|reply:erro
+servidor-ruby|req:login|henrique|13:43:04|relogio: 1|reply:login|relogio:3
+servidor-csharp|req:canais|ia|13:43:06|relogio:3|reply:sucesso
+servidor-ruby|req:login|marana|2026-05-18 13:43:06.407920|relogio:2|reply:login|relogio:4
+servidor-ruby|req:canais|volksvagen|2026-05-18 13:43:10.255657|relogio:5|reply:sucesso|relogio:6
+servidor-csharp|req:canais|kiss|13:43:09|relogio: 4|reply:sucesso
+servidor-csharp|req:canais|fiat|2026-05-18 13:43:12.257902|relogio:7|reply:sucesso
+servidor-ruby|req:canais|renault|2026-05-18 13:43:15.416473|relogio:8|reply:sucesso|relogio:9
+servidor-csharp|req:canais|chevrolet|2026-05-18 13:43:17.418905|relogio:10|reply:sucesso
+servidor-ruby|req:canais|ESTRUTURA DE DADOS|13:43:20|relogio:6|reply:sucesso|relogio:10
+servidor-csharp|req:canais|redhot|13:43:20|relogio: 7|reply:sucesso
+servidor-ruby|req:canais|black sabbath|13:43:23|relogio: 11|reply:sucesso|relogio:12
+servidor-csharp|req:canais|pedra leticia|13:43:26|relogio: 13|reply:sucesso
+servidor-ruby|req:canais|ARQUITETURA DE COMPUTADORES|13:43:30|relogio:14|reply:sucesso|relogio:15
+servidor-csharp|req:canais|bmw|2026-05-18 13:43:29.792995|relogio:13|reply:sucesso
+servidor-ruby|req:canais|byd|2026-05-18 13:43:31.795232|relogio:14|reply:sucesso|relogio:16
+servidor-csharp|req:canais|eof|2026-05-18 13:43:33.797159|relogio:17|reply:erro

@@ -88,6 +88,7 @@ class Program
                 }
                 ServerHelpers.SendToClient(response, server, relogio_servidor);
                 Thread.Sleep(1000);
+                ServerHelpers.WriteMessage(message, response);
 
                 if (contadorMensagens % 15 == 0)
                 {

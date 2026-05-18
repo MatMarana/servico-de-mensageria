@@ -88,7 +88,7 @@ services:
       - servidor-python
 
 # ------------- CSHARP -------------
-servidor-csharp:
+  servidor-csharp:
     build:
       context: .
       dockerfile: Dockerfile-csharp
