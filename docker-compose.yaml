@@ -1,0 +1,114 @@
+services:
+  # ---------------- BROKER ----------------
+  broker:
+    build:
+      context: .
+      dockerfile: Dockerfile-python
+    container_name: broker
+    volumes:
+      - ./broker/broker.py:/app/main.py
+    ports:
+      - "5555:5555"
+      - "5556:5556"
+
+  # ---------------- PROXY ----------------
+  proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile-python
+    container_name: proxy
+    volumes:
+      - ./proxy/proxy.py:/app/main.py
+    ports:
+      - "5557:5557"
+      - "5558:5558"
+
+  # -------------- REFERENCE --------------
+  reference:
+    build:
+      context: .
+      dockerfile: Dockerfile-python
+    container_name: reference
+    volumes:
+      - ./reference/reference.py:/app/main.py
+    ports:
+      - "5559:5559"
+
+# ------------- RUBY -------------
+  servidor-ruby:
+    build:
+      context: .
+      dockerfile: Dockerfile-ruby
+    container_name: servidor-ruby
+    volumes:
+      - ./codigo-ruby/servidor.rb:/app/main.rb
+      - ./codigo-ruby/utils.rb:/app/utils.rb
+      - ./mensagens_txt/arquivo1.txt:/app/mensagens_txt/arquivo1.txt
+      - ./mensagens_txt/arquivo2.txt:/app/mensagens_txt/arquivo2.txt
+    depends_on:
+      - broker
+      - proxy
+      - reference
+
+  cliente-ruby:
+    build:
+      context: .
+      dockerfile: Dockerfile-ruby
+    container_name: cliente-ruby
+    image: cliente_ruby:gemzmq
+    volumes:
+      - ./codigo-ruby/cliente.rb:/app/main.rb
+      - ./codigo-ruby/utils.rb:/app/utils.rb
+    depends_on:
+      - servidor-ruby
+
+# ------------- PYTHON -------------
+  servidor-python:
+    build:
+      context: .
+      dockerfile: Dockerfile-python
+    container_name: servidor-python
+    volumes:
+      - ./codigo-python/servidor.py:/app/main.py
+      - ./mensagens_txt/arquivo1.txt:/app/mensagens_txt/arquivo1.txt
+      - ./mensagens_txt/arquivo2.txt:/app/mensagens_txt/arquivo2.txt
+    depends_on:
+      - broker
+      - proxy
+      - reference
+
+  cliente-python:
+    build:
+      context: .
+      dockerfile: Dockerfile-python
+    container_name: cliente-python
+    volumes:
+      - ./codigo-python/cliente.py:/app/main.py
+    depends_on:
+      - servidor-python
+
+# ------------- CSHARP -------------
+servidor-csharp:
+    build:
+      context: .
+      dockerfile: Dockerfile-csharp
+      args:
+        FOLDER_NAME: Servidor
+    container_name: servidor-csharp
+    volumes:
+      - ./mensagens_txt/arquivo1.txt:/app/mensagens_txt/arquivo1.txt
+      - ./mensagens_txt/arquivo2.txt:/app/mensagens_txt/arquivo2.txt
+    depends_on:
+      - broker
+      - proxy
+      - reference
+
+  cliente-csharp:
+    build:
+      context: .
+      dockerfile: Dockerfile-csharp
+      args:
+        FOLDER_NAME: Cliente
+    container_name: cliente-csharp
+    depends_on:
+      - servidor-csharp

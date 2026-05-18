@@ -1,0 +1,3 @@
+servidor-ruby|req:login|henrique|2026-05-18 13:13:03.150978|relogio:1|reply:login|relogio:2
+servidor-ruby|req:canais|volksvagen|2026-05-18 13:13:05.348531|relogio:3|reply:sucesso|relogio:4
+servidor-ruby|req:canais|fiat|2026-05-18 13:13:07.351390|relogio:5|reply:sucesso|relogio:6
