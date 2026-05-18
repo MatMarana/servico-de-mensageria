@@ -19,3 +19,76 @@ servidor-ruby|req:canais|ARQUITETURA DE COMPUTADORES|13:43:30|relogio:14|reply:s
 servidor-csharp|req:canais|bmw|2026-05-18 13:43:29.792995|relogio:13|reply:sucesso
 servidor-ruby|req:canais|byd|2026-05-18 13:43:31.795232|relogio:14|reply:sucesso|relogio:16
 servidor-csharp|req:canais|eof|2026-05-18 13:43:33.797159|relogio:17|reply:erro
+servidor-ruby|req:login|Mateus|14:20:10|relogio:1|reply:login|relogio:2
+servidor-csharp|req:login|henrique|2026-05-18 14:20:10.554202|relogio:1|reply:erro
+servidor-ruby|req:login|henrique|14:20:10|relogio: 1|reply:login|relogio:3
+servidor-csharp|req:canais|ia|14:20:12|relogio:3|reply:sucesso
+servidor-ruby|req:login|marana|2026-05-18 14:20:12.560920|relogio:2|reply:login|relogio:4
+servidor-ruby|req:canais|volksvagen|2026-05-18 14:20:16.367171|relogio:5|reply:sucesso|relogio:6
+servidor-csharp|req:canais|kiss|14:20:15|relogio: 4|reply:sucesso
+servidor-csharp|req:canais|fiat|2026-05-18 14:20:18.369619|relogio:7|reply:sucesso
+servidor-ruby|req:canais|nightwish|14:20:19|relogio: 5|reply:sucesso|relogio:7
+servidor-csharp|req:canais|renault|2026-05-18 14:20:21.572054|relogio:8|reply:sucesso
+servidor-ruby|req:canais|redhot|14:20:22|relogio: 8|reply:sucesso|relogio:9
+servidor-csharp|req:canais|chevrolet|2026-05-18 14:20:24.575655|relogio:9|reply:sucesso
+servidor-ruby|req:canais|black sabbath|14:20:25|relogio: 10|reply:sucesso|relogio:11
+servidor-csharp|req:canais|toyota|2026-05-18 14:20:27.579099|relogio:10|reply:sucesso
+servidor-ruby|req:canais|pedra leticia|14:20:28|relogio: 12|reply:sucesso|relogio:13
+servidor-csharp|req:canais|bmw|2026-05-18 14:20:30.581278|relogio:11|reply:sucesso
+servidor-ruby|req:canais|raimundos|14:20:31|relogio: 14|reply:sucesso|relogio:15
+servidor-csharp|req:canais|byd|2026-05-18 14:20:33.583673|relogio:12|reply:sucesso
+servidor-ruby|req:canais|cbr jr|14:20:34|relogio: 16|reply:sucesso|relogio:17
+servidor-csharp|req:canais|eof|2026-05-18 14:20:36.586055|relogio:13|reply:erro
+servidor-ruby|req:canais|eof|14:20:37|relogio: 18|reply:sucesso|relogio:19
+servidor-csharp|req:listar||2026-05-18 14:20:39.589034|relogio:14|reply:Canal 0: ia
+Canal 1: kiss
+Canal 2: fiat
+Canal 3: renault
+Canal 4: chevrolet
+Canal 5: toyota
+Canal 6: bmw
+Canal 7: byd
+servidor-ruby|req:canais|kiss|14:20:40|relogio: 20|reply:sucesso|relogio:21
+servidor-ruby|req:canais|nightwish|14:20:43|relogio: 22|reply:sucesso|relogio:23
+servidor-csharp|req:canal|kiss-teste1|2026-05-18 14:20:42.592320|relogio:15|reply:ok
+servidor-csharp|req:canais|redhot|14:20:46|relogio: 24|reply:sucesso
+servidor-csharp|req:login|giovanni|14:22:24|relogio:1|reply:login
+servidor-ruby|req:login|henrique|2026-05-18 14:22:24.418341|relogio:1|reply:login|relogio:2
+servidor-ruby|req:canais|IA|14:22:26|relogio:2|reply:sucesso|relogio:3
+servidor-csharp|req:login|henrique|14:22:24|relogio: 1|reply:erro
+servidor-ruby|req:canais|TCC|14:22:29|relogio:4|reply:sucesso|relogio:5
+servidor-csharp|req:canais|volksvagen|2026-05-18 14:22:26.421640|relogio:3|reply:sucesso
+servidor-python|req:login|tiago|14:22:30|relogio: 2|reply:erro|relogio:3
+servidor-ruby|req:canais|fiat|2026-05-18 14:22:32.163220|relogio:4|reply:sucesso|relogio:6
+servidor-csharp|req:canais|estrutura de dados|14:22:31|relogio:6|reply:sucesso
+servidor-csharp|req:canais|complexidade de algoritmos|14:22:36|relogio:7|reply:sucesso
+servidor-python|req:canais|renault|2026-05-18 14:22:34.166548|relogio:7|reply:sucesso|relogio:8
+servidor-ruby|req:canais|ARQUITETURA DE COMPUTADORES|14:22:39|relogio:8|reply:sucesso|relogio:9
+servidor-csharp|req:login|mateus|14:22:40|relogio: 4|reply:login
+servidor-python|req:canais|EOF|14:22:41|relogio:10|reply:sucesso|relogio:11
+servidor-ruby|req:canais|kiss|14:22:43|relogio: 8|reply:sucesso|relogio:10
+servidor-csharp|req:canais|nightwish|14:22:46|relogio: 11|reply:sucesso
+servidor-python|req:canais|chevrolet|2026-05-18 14:22:44.441263|relogio:9|reply:sucesso|relogio:12
+servidor-ruby|req:canais|redhot|14:22:49|relogio: 12|reply:sucesso|relogio:13
+servidor-python|req:listar||14:22:50|relogio:12|reply:canal 0: renault
+canal 1: eof
+canal 2: chevrolet
+servidor-csharp|req:canais|black sabbath|14:22:52|relogio: 14|reply:sucesso
+servidor-ruby|req:canais|toyota|2026-05-18 14:22:54.706151|relogio:13|reply:sucesso|relogio:14
+servidor-csharp|req:canais|bmw|2026-05-18 14:22:56.708962|relogio:15|reply:sucesso
+servidor-python|req:canais|pedra leticia|14:22:55|relogio: 15|reply:sucesso|relogio:16
+servidor-ruby|req:canais|byd|2026-05-18 14:22:58.711942|relogio:16|reply:sucesso|relogio:17
+servidor-csharp|req:canais|eof|2026-05-18 14:23:00.715053|relogio:18|reply:erro
+servidor-python|req:canal|renault-mensagem numero 0|14:23:00|relogio:13|reply:ok|relogio:17
+servidor-ruby|req:listar||2026-05-18 14:23:02.718254|relogio:19|reply:canal 0: IA 
+canal 1: TCC 
+canal 2: fiat 
+canal 3: ARQUITETURA DE COMPUTADORES 
+canal 4: kiss 
+canal 5: redhot 
+canal 6: toyota 
+canal 7: byd 
+servidor-csharp|req:canais|raimundos|14:23:06|relogio: 17|reply:sucesso
+servidor-python|req:canal|tcc-teste1|2026-05-18 14:23:04.721521|relogio:20|reply:ok|relogio:21
+servidor-ruby|req:canais|cbr jr|14:23:09|relogio: 19|reply:sucesso|relogio:21
+servidor-python|req:canais|eof|14:23:12|relogio: 22|reply:erro|relogio:23

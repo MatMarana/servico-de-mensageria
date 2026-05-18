@@ -5,6 +5,19 @@ from datetime import datetime
 
 ARQUIVO_CADASTRO = "usuarioCadastrado.txt"
 
+def escrever_mensagem(mensagem, resposta):
+    path1 = "mensagens_txt/arquivo1.txt"
+    path2 = "mensagens_txt/arquivo2.txt"
+
+    linha = f"servidor-python|req:{mensagem}|reply:{resposta}\n"
+
+    with open(path1, "a", encoding="utf-8") as arquivo:
+        arquivo.write(linha)
+
+    with open(path2, "a", encoding="utf-8") as arquivo:
+        arquivo.write(linha)
+
+    time.sleep(1)
 
 def carregar_usuarios():
     with open(ARQUIVO_CADASTRO, "r") as f:
@@ -132,5 +145,6 @@ while True:
 
     resposta = resposta.strip().lower()
     print(f"{resposta}", flush=True)
+    escrever_mensagem(mensagem, resposta)
     time.sleep(1)
     socket.send(msgpack.packb(resposta))
