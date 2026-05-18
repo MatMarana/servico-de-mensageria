@@ -107,6 +107,9 @@ loop do
   puts "#{reply}"
   sleep(1)
 
+  Utils.salvar_txt("mensagens_txt/arquivo1.txt", mensagem, reply)
+  Utils.salvar_txt("mensagens_txt/arquivo2.txt", mensagem, reply)
+
   if contador_mensagens % 15 == 0
     mensagem = "heartbeat|#{nome_servidor}|#{relogio_servidor}"
     puts"#{mensagem}"

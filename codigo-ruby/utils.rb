@@ -41,4 +41,10 @@ module Utils
         maior = [relogio_cliente.to_i, relogio_servidor.to_i].max
         return maior
     end
+
+    def self.salvar_txt(txt_path, mensagem, resposta)
+        File.open(txt_path, "a") do |arquivo|
+            arquivo.puts("servidor-ruby|req:#{mensagem}|reply:#{resposta}")
+        end
+    end
 end
